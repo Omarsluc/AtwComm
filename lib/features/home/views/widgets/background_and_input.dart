@@ -15,15 +15,21 @@ import 'circle_avatar_with_icon.dart';
 Widget buildBackgroundImages(context) {
   return Stack(
     children: [
-      const Positioned(
+      Positioned(
         left: 40,
         bottom: 120,
-        child: GradientCircleAvatar(
-          text: 'Staff',
-          gradient: LinearGradient(
-            colors: [Colors.blue, Colors.green],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        child: InkWell(
+          onTap: (){
+            Navigator.of(context).pushNamed(Routes.staffScreen);
+          },
+          child: const GradientCircleAvatar(
+            radius: 47,
+            text: 'Staff',
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.green],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
       ),
@@ -33,8 +39,10 @@ Widget buildBackgroundImages(context) {
           child: InkWell(
             splashColor: Colors.transparent,
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.commScreen);            },
+              Navigator.of(context).pushNamed(Routes.commScreen);
+              },
             child: const GradientCircleAvatar(
+              radius: 47,
               text: 'Community',
               gradient: LinearGradient(
                 colors: [Colors.blue, Colors.green],

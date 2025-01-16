@@ -1,5 +1,6 @@
 import 'package:atw_comm/core/routing/routes.dart';
 import 'package:atw_comm/features/home/views/community_screen.dart';
+import 'package:atw_comm/features/home/views/staff_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/home/views/home_screen.dart';
@@ -16,7 +17,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => CommunityScreen(),
         );
-
+      case Routes.staffScreen:
+        return MaterialPageRoute(
+          builder: (_) => StaffScreen(),
+        );
       default:
         return null;
     }

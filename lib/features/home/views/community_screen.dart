@@ -18,19 +18,74 @@ class CommunityScreen extends StatelessWidget {
       builder: (context, state) {
         bool isLoading = state is SearchLoadingState;
         return Scaffold(
+          appBar: AppBar(
+            backgroundColor: ColorsManager.colorBlack,
+            leading: ArrowBackCustom(),
+          ),
           backgroundColor: ColorsManager.colorBlack,
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ArrowBackCustom(),
-                  SizedBox(height: 30,),
-                  buildInputRow(context),
-                  SizedBox(height: 30,),
-                  isLoading ? Center(child: CircularProgressIndicator(color: ColorsManager.urlColor,)) : Text(context.read<SearchCubit>().botResponse ?? '',style: TextStyles.font16WhiteMedium,)
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'WHO WE ARE',
+                      style: TextStyle(
+                        color: Color(0xFFFFED50),
+                        fontSize: 40,
+                        fontStyle: FontStyle.italic,
+                        fontFamily: 'Jumper PERSONAL USE ONLY',
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.50,
+                      ),
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Imagine a world where technology connects, protects, and empowers. That’s the world ATW is building.\n  Founded in Cairo in ',
+                            style: TextStyle(
+                              color: Color(0xFF9BF0E1),
+                              fontSize: 17,
+                              fontFamily: 'Comfortaa',
+                              fontWeight: FontWeight.w400,
+                              height: 1.35,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '1997',
+                            style: TextStyle(
+                              color: Color(0xFFFFED50),
+                              fontSize: 17,
+                              fontFamily: 'Comfortaa',
+                              fontWeight: FontWeight.w400,
+                              height: 1.35,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' as an R&D organization, ATW grew into a global leader in digital transformation. From Cairo to Houston, Dubai, and across Europe and Africa, we’re creating secure, intelligent solutions that drive business success.  In 2016, ATW’s second generation launched a new era of digitization, expanding globally. By 2019, we’d established roots in Texas, connecting continents with transformative solutions.  Now, as we approach 2025, our third generation is embracing AI to empower businesses to lead in a future of connectivity and trust—one innovation at a time.',
+                            style: TextStyle(
+                              color: Color(0xFF9BF0E1),
+                              fontSize: 17,
+                              fontFamily: 'Comfortaa',
+                              fontWeight: FontWeight.w400,
+                              height: 1.35,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Container(
+                    //   height: 70,width: double.infinity,
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(30),
+                    //     gradient: LinearGradient(colors: [Colors.blue,Colors.green])
+                    //   ),
+                    // )
+                  ],
+                ),
               ),
             ),
           ),
