@@ -20,7 +20,7 @@ Widget buildBackgroundImages(context) {
         bottom: 120,
         child: InkWell(
           onTap: (){
-            Navigator.of(context).pushNamed(Routes.staffScreen);
+            Navigator.of(context).pushNamed(Routes.cameraScreen);
           },
           child: const GradientCircleAvatar(
             radius: 47,
