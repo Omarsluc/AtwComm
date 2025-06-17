@@ -68,10 +68,6 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                 ),
                             const SizedBox(height: 20),
-                            // BlocBuilderSearchResult(
-                            //   textSize: textSize,
-                            //   searchState: state,
-                            // ),
                             const SizedBox(height: 16),
                           ],
                         ),
@@ -83,10 +79,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         )
-        // bottomNavigationBar: Padding(
-        //   padding: const EdgeInsets.symmetric(vertical: 30.0),
-        //   child: _buildAskMeButton(context),
-        // ),
         );
   }
 }

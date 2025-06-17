@@ -1,6 +1,6 @@
 import 'package:atw_comm/core/routing/routes.dart';
 import 'package:atw_comm/features/face_recognition/camera_view.dart';
-import 'package:atw_comm/features/home/views/community_screen.dart';
+import 'package:atw_comm/features/home/views/knowledge_contributions_screen.dart';
 import 'package:atw_comm/features/home/views/staff_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,7 @@ class AppRouter {
         );
       case Routes.commScreen:
         return MaterialPageRoute(
-          builder: (_) => CommunityScreen(),
+          builder: (_) => KnowledgeContributionScreen(),
         );
       case Routes.cameraScreen:
         return MaterialPageRoute(

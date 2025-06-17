@@ -3,6 +3,7 @@ import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/routing/routes.dart';
@@ -41,9 +42,9 @@ Widget buildBackgroundImages(context) {
             onTap: () {
               Navigator.of(context).pushNamed(Routes.commScreen);
               },
-            child: const GradientCircleAvatar(
-              radius: 47,
-              text: 'Community',
+            child: GradientCircleAvatar(
+              radius: 60.sp,
+              text: 'knowledge Contributions',
               gradient: LinearGradient(
                 colors: [Colors.blue, Colors.green],
                 begin: Alignment.topLeft,

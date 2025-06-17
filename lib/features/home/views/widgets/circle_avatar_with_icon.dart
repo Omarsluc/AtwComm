@@ -28,9 +28,10 @@ class GradientCircleAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           color: Colors.white,
-          fontSize: radius / 4, // Adjust font size based on radius
+          fontSize: radius / 4.5, // Adjust font size based on radius
           fontWeight: FontWeight.bold,
         ),
       ),
