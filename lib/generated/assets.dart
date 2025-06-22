@@ -2,6 +2,15 @@
 class Assets {
   Assets._();
 
+  static const String figuresCalendar = 'assets/figures/calendar.png';
+  static const String figuresFemaleOnboradingFigure = 'assets/figures/female_onborading_figure.png';
+  static const String figuresGuyReading = 'assets/figures/guy_reading.png';
+  static const String figuresGuyTextingLanding = 'assets/figures/guy_texting_landing.png';
+  static const String figuresOnboardingPieChart = 'assets/figures/onboarding_pie_chart.png';
+  static const String figuresOnboardingStopwatch = 'assets/figures/onboarding_stopwatch.png';
+  static const String figuresOnboardingTiles = 'assets/figures/onboarding_tiles.png';
+  static const String iconsArrowRight = 'assets/icons/arrow_right.svg';
+  static const String iconsFaceID = 'assets/icons/faceID.svg';
   static const String iconsMic = 'assets/icons/mic.svg';
   static const String imagesAtwLogo = 'assets/images/atwLogo.svg';
   static const String translationsEn = 'assets/translations/en.json';

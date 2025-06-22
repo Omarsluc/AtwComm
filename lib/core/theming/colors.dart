@@ -13,10 +13,14 @@ class ColorsManager {
 
   // static Color backgroundScaffodl = Color(0xFFfae3e3);
 
+  // static Color secondaryPurple =  Color(0xFFFAFAFA);
+
   static Color red = Colors.red.withOpacity(0.8);
   static const Color white = Colors.white;
+  static const Color mainColor = Color(0xFF8B5CF6);
 
-  static const Color mainBlue = Color(0xFF247CFF);
+
+  static const Color mainBlue = Color(0xFF3B82F6);
   static const Color lightBlue = Color(0xFFF4F8FF);
   static const Color darkBlue = Color(0xFF242424);
   static const Color gray = Color(0xFF757575);

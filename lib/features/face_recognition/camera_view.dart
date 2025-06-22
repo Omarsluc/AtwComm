@@ -1,6 +1,6 @@
 import 'package:atw_comm/core/routing/routes.dart';
 import 'package:atw_comm/core/utils/consts.dart';
-import 'package:atw_comm/features/home/views/staff_screen.dart';
+import 'package:atw_comm/features/staff/views/staff_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';

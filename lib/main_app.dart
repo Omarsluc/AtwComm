@@ -1,3 +1,4 @@
+import 'package:atw_comm/features/onboarding/views/onboarding_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'core/routing/app_router.dart';
 import 'core/routing/routes.dart';
+import 'features/onboarding/views/landing_screen.dart';
+import 'features/staff/views/staff_screen.dart';
 
 
 class MainApp extends StatelessWidget {
@@ -15,11 +18,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
+      designSize: const Size(360,820),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
         return MaterialApp(
+          home: StaffScreen(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
@@ -42,7 +46,7 @@ class MainApp extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.w500)),
           ),
-          initialRoute: Routes.homeScreen,
+          // initialRoute: Routes.homeScreen,
           onGenerateRoute: appRouter.generateRoute,
         );
       },

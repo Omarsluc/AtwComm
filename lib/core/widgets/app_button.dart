@@ -1,5 +1,8 @@
+import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/public_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theming/style.dart';
 
@@ -8,14 +11,14 @@ class AppButton extends StatelessWidget {
       {Key? key,
       required this.onPressed,
       required this.myText,
-      required this.backGroundColor,
+      this.backGroundColor,
       this.textColor,
       this.width,
       this.radius = 12,
       this.textTheme,
       this.fontWeight = FontWeight.bold,
       // required this.fontSize,
-      required this.iconPath,
+      this.iconPath,
       this.borderSide,
       this.showIcon,
       this.height,
@@ -24,12 +27,12 @@ class AppButton extends StatelessWidget {
 
   final Function()? onPressed;
   final String myText;
-  final Color backGroundColor;
+  final Color? backGroundColor;
   final Color? textColor;
   final double? width;
   final double? height;
   final double radius;
-  final String iconPath;
+  final String? iconPath;
   final bool? showIcon;
   final TextStyle? textTheme;
   final FontWeight fontWeight;
@@ -44,26 +47,33 @@ class AppButton extends StatelessWidget {
       padding: padding ?? const EdgeInsets.symmetric(horizontal: 30),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: backGroundColor,
+          backgroundColor: backGroundColor ?? ColorsManager.mainColor,
           foregroundColor: Colors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
             side: borderSide ??
-                BorderSide(width: 0, color: backGroundColor), // <-- Radius
+                BorderSide(width: 0, color: backGroundColor ?? ColorsManager.mainColor), // <-- Radius
           ),
         ),
         onPressed: onPressed,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: PublicText(
-                text: myText,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                color: textColor ?? Colors.white,
-                fontWeight: fontWeight,
-                textTheme: TextStyles.font14LightGrayRegular,
-                textOverflow: TextOverflow.ellipsis),
+            child: Row(
+              spacing: 10.w,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                PublicText(
+                    text: myText,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    color: textColor ?? Colors.white,
+                    fontWeight: fontWeight,
+                    textTheme: TextStyles.font14LightGrayRegular,
+                    textOverflow: TextOverflow.ellipsis),
+                iconPath != null ? SvgPicture.asset(iconPath ?? '') : SizedBox()
+              ],
+            ),
           ),
         ),
         // margin: EdgeInsets.zero,
