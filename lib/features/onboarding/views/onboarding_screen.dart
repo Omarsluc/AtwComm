@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theming/colors.dart';
 import '../../../generated/assets.dart';
+import 'landing_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -157,7 +158,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       },
                     ),
 
-                    // 3D Character Placeholder (Center)
                     Center(
                       child: Container(
                         width: 200.w,
@@ -237,7 +237,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         ),
                         const Spacer(),
                         // Get Started Button
-                        AppButton(onPressed: (){}, myText: 'Get Started', iconPath: '')
+                        AppButton(onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LandingScreen()),
+                          );
+                        }, myText: 'Get Started', iconPath: '')
                       ],
                     ),
                   ),

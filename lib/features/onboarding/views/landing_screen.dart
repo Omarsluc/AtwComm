@@ -1,3 +1,4 @@
+import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/app_button.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../core/routing/routes.dart';
 import '../../../core/widgets/animating_faceID_button.dart';
 import '../../../generated/assets.dart';
 
@@ -58,7 +60,7 @@ class LandingScreen extends StatelessWidget {
                         Assets.figuresGuyTextingLanding, // Replace with your asset path
                         height: 180.h,
                       ),
-                      AppButton(onPressed: (){}, myText: 'Find Articles', iconPath: Assets.iconsArrowRight),
+                      AppButton(onPressed: () => context.pushNamed(Routes.allArticlesScreen), myText: 'Find Articles', iconPath: Assets.iconsArrowRight),
                       SizedBox(height: 20.h),
                       Text(
                         "Staff Member?",
@@ -76,6 +78,7 @@ class LandingScreen extends StatelessWidget {
                       // SizedBox(height: 20.h),
                       AnimatedFaceIdButton(
                         icon: SvgPicture.asset(Assets.iconsFaceID),
+                        onTap: () => context.pushNamed(Routes.cameraScreen),
                       )
                     ],
                   ),

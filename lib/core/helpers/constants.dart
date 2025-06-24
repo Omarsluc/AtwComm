@@ -8,6 +8,8 @@ class SharredKeys {
   static const String userName = 'UserName';
   static const String userImage = '';
 
+  static const String elevenLabsKey = 'sk_8d8a0934a19dad3b2f60c07029597978268b7ea555a89885';
+
   static const String selectedLang = 'English';
 
   static const String payPalClientId =

@@ -1,5 +1,3 @@
-import 'package:atw_comm/features/home/logic/search_cubit.dart';
-import 'package:atw_comm/features/home/views/home_screen.dart';
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +22,8 @@ void main() async {
     supportedLocales: const [Locale('en')],
     path: 'assets/translations',
     fallbackLocale: const Locale('en'),
-    child: BlocProvider(
-      create: (context) => SearchCubit(),
-      child: MainApp(
-        appRouter: AppRouter(),
-      ),
+    child: MainApp(
+      appRouter: AppRouter(),
     ),
   ));
 }

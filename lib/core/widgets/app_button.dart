@@ -11,10 +11,11 @@ class AppButton extends StatelessWidget {
       {Key? key,
       required this.onPressed,
       required this.myText,
+        this.isSecondary = false,
       this.backGroundColor,
       this.textColor,
       this.width,
-      this.radius = 12,
+      this.radius = 18,
       this.textTheme,
       this.fontWeight = FontWeight.bold,
       // required this.fontSize,
@@ -25,6 +26,7 @@ class AppButton extends StatelessWidget {
       this.padding})
       : super(key: key);
 
+  final bool isSecondary;
   final Function()? onPressed;
   final String myText;
   final Color? backGroundColor;
@@ -46,7 +48,12 @@ class AppButton extends StatelessWidget {
       height: height,
       padding: padding ?? const EdgeInsets.symmetric(horizontal: 30),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
+        style: isSecondary ? OutlinedButton.styleFrom(
+          backgroundColor: const Color(0xFFE8E1FF),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: ColorsManager.mainColor),
+            borderRadius: BorderRadius.circular(radius),
+        )) : ElevatedButton.styleFrom(
           backgroundColor: backGroundColor ?? ColorsManager.mainColor,
           foregroundColor: Colors.grey,
           shape: RoundedRectangleBorder(
@@ -67,17 +74,18 @@ class AppButton extends StatelessWidget {
                     text: myText,
                     textAlign: TextAlign.center,
                     maxLines: 1,
-                    color: textColor ?? Colors.white,
+                    color: isSecondary ? ColorsManager.mainColor : textColor ?? Colors.white,
                     fontWeight: fontWeight,
                     textTheme: TextStyles.font14LightGrayRegular,
                     textOverflow: TextOverflow.ellipsis),
-                iconPath != null ? SvgPicture.asset(iconPath ?? '') : SizedBox()
-              ],
+                if (iconPath != null) ...[
+                  SizedBox(width: 10.w),
+                  SvgPicture.asset(iconPath!)
+                ],              ],
             ),
           ),
         ),
         // margin: EdgeInsets.zero,
-        // borderRadius: BorderRadius.circular(15.0),
       ),
     );
   }

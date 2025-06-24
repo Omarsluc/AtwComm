@@ -1,22 +1,12 @@
-import 'dart:developer';
-
 import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/core/theming/colors.dart';
-import 'package:atw_comm/core/utils/consts.dart';
-import 'package:atw_comm/core/widgets/arrow_back.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../core/routing/routes.dart';
-import '../../../core/service/speachToText.dart';
-import '../../../core/theming/style.dart';
-import '../../../core/widgets/app_text_form_filed.dart';
+import '../../../core/widgets/article_list_item.dart';
 import '../../../generated/assets.dart';
-import '../../home/logic/search_cubit.dart';
 
 class StaffScreen extends StatelessWidget {
   const StaffScreen({super.key});
@@ -41,7 +31,7 @@ class StaffScreen extends StatelessWidget {
                   radius: 24,
                   backgroundColor: Colors.grey[300],
                   child: Icon(Icons.person,
-                      color: Colors.deepPurple, size: 32),
+                      color: ColorsManager.mainColor, size: 32.sp),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -80,8 +70,8 @@ class StaffScreen extends StatelessWidget {
                           widthFactor: 0.5,
                           heightFactor: 0.5,
                           child: Container(
-                            width: 400,
-                            height: 400,
+                            width: 400.w,
+                            height: 400.h,
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.15),
                               shape: BoxShape.circle,
@@ -218,14 +208,12 @@ class StaffScreen extends StatelessWidget {
                   child: ListView(
                     children: [
                       ArticleListItem(
-                        icon: Icons.camera_alt,
-                        color: Color(0xFF8B5CF6),
+                        articleType: ArticleType.uiUx,
                         title: 'Ui Ux Artical',
                         time: '5h 15m',
                       ),
                       ArticleListItem(
-                        icon: Icons.settings,
-                        color: Color(0xFF8B5CF6),
+                        articleType: ArticleType.backend,
                         title: 'Backend',
                         time: '10h 30m',
                       ),
@@ -236,63 +224,6 @@ class StaffScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ArticleListItem extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String title;
-  final String time;
-  const ArticleListItem({
-    Key? key,
-    required this.icon,
-    required this.color,
-    required this.title,
-    required this.time,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Icon(icon, color: color, size: 32),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.access_time, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    time,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

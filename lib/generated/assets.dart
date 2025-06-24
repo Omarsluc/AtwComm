@@ -9,6 +9,7 @@ class Assets {
   static const String figuresOnboardingPieChart = 'assets/figures/onboarding_pie_chart.png';
   static const String figuresOnboardingStopwatch = 'assets/figures/onboarding_stopwatch.png';
   static const String figuresOnboardingTiles = 'assets/figures/onboarding_tiles.png';
+  static const String figuresWorldGlobeBooks = 'assets/figures/world_globe_books.png';
   static const String iconsArrowRight = 'assets/icons/arrow_right.svg';
   static const String iconsFaceID = 'assets/icons/faceID.svg';
   static const String iconsMic = 'assets/icons/mic.svg';

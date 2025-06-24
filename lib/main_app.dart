@@ -1,4 +1,6 @@
 import 'package:atw_comm/features/onboarding/views/onboarding_screen.dart';
+import 'package:atw_comm/features/staff/views/add_article_screen.dart';
+import 'package:atw_comm/features/staff/views/my_articles_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,13 +22,9 @@ class MainApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360,820),
       minTextAdapt: true,
-      splitScreenMode: true,
       builder: (_, child) {
         return MaterialApp(
-          home: StaffScreen(),
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
+          home: OnboardingScreen(),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.red,
