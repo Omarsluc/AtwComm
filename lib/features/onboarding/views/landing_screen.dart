@@ -37,17 +37,17 @@ class LandingScreen extends StatelessWidget {
                   Text(
                     "Hi there!",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.deepPurple,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     "You can find articles here",
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Column(
                     children: [
                       Text(
@@ -55,12 +55,12 @@ class LandingScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                       Image.asset(
                         Assets.figuresGuyTextingLanding, // Replace with your asset path
                         height: 180.h,
                       ),
-                      AppButton(onPressed: () => context.pushNamed(Routes.allArticlesScreen), myText: 'Find Articles', iconPath: Assets.iconsArrowRight),
+                      AppButton(onPressed: () => context.pushNamed(Routes.articlesCategoriesScreen), myText: 'Find Articles', iconPath: Assets.iconsArrowRight),
                       SizedBox(height: 20.h),
                       Text(
                         "Staff Member?",
@@ -75,7 +75,7 @@ class LandingScreen extends StatelessWidget {
                         "sign in to continue",
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
-                      // SizedBox(height: 20.h),
+                      SizedBox(height: 40.h),
                       AnimatedFaceIdButton(
                         icon: SvgPicture.asset(Assets.iconsFaceID),
                         onTap: () => context.pushNamed(Routes.cameraScreen),

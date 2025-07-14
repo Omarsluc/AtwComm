@@ -4,6 +4,9 @@ import 'package:atw_comm/features/staff/views/staff_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/articles/views/all_articles_screen.dart';
 import '../../features/articles/views/article_details_screen.dart';
+import '../../features/articles/views/articles_categories_screen.dart';
+import '../../features/articles/views/articles_screen.dart';
+import '../../features/articles/views/create_ai_podcast.dart';
 import '../../features/staff/views/add_article_screen.dart';
 
 class AppRouter {
@@ -29,6 +32,18 @@ class AppRouter {
       case Routes.articleDetailsScreen:
         return MaterialPageRoute(
           builder: (_) => ArticleDetailsScreen(),
+        );
+      case Routes.articlesCategoriesScreen:
+        return MaterialPageRoute(
+          builder: (_) => ArticlesCategoriesScreen(),
+        );
+      case Routes.createAIPodcastScreen:
+        return MaterialPageRoute(
+          builder: (_) => CreateAIPodcastScreen(),
+        );
+      case Routes.articlesScreen:
+        return MaterialPageRoute(
+          builder: (_) => ArticlesScreen(),
         );
       default:
         return null;

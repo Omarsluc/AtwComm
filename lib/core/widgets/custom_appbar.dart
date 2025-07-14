@@ -7,6 +7,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
   final Color textColor;
   final double elevation;
+  final Color backGroundColor;
 
   const CustomAppBar({
     super.key,
@@ -15,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
     this.textColor = Colors.white,
     this.elevation = 0,
+    this.backGroundColor = ColorsManager.mainColor
   });
 
   @override

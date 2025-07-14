@@ -2,15 +2,23 @@
 class Assets {
   Assets._();
 
+  static const String figuresBackgroundBubble = 'assets/figures/background_bubble.svg';
+  static const String figuresBoyUsingLaptop = 'assets/figures/boy_using_laptop.png';
   static const String figuresCalendar = 'assets/figures/calendar.png';
   static const String figuresFemaleOnboradingFigure = 'assets/figures/female_onborading_figure.png';
+  static const String figuresFrontEngineering = 'assets/figures/front_engineering.png';
   static const String figuresGuyReading = 'assets/figures/guy_reading.png';
   static const String figuresGuyTextingLanding = 'assets/figures/guy_texting_landing.png';
+  static const String figuresMobile = 'assets/figures/mobile.png';
   static const String figuresOnboardingPieChart = 'assets/figures/onboarding_pie_chart.png';
   static const String figuresOnboardingStopwatch = 'assets/figures/onboarding_stopwatch.png';
   static const String figuresOnboardingTiles = 'assets/figures/onboarding_tiles.png';
+  static const String figuresRobot = 'assets/figures/robot.png';
+  static const String figuresRocketCloud = 'assets/figures/rocket_cloud.png';
+  static const String figuresSecurity = 'assets/figures/security.png';
   static const String figuresWorldGlobeBooks = 'assets/figures/world_globe_books.png';
   static const String iconsArrowRight = 'assets/icons/arrow_right.svg';
+  static const String iconsAtwLogoPurple = 'assets/icons/atw_logo_purple.svg';
   static const String iconsFaceID = 'assets/icons/faceID.svg';
   static const String iconsMic = 'assets/icons/mic.svg';
   static const String imagesAtwLogo = 'assets/images/atwLogo.svg';

@@ -1,12 +1,9 @@
-import 'package:atw_comm/core/helpers/spacing.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/article_list_item.dart';
-import 'package:atw_comm/core/widgets/custom_appbar.dart';
+import 'package:atw_comm/core/widgets/globe_appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../../generated/assets.dart';
 
 class AllArticlesScreen extends StatelessWidget {
   const AllArticlesScreen({super.key});
@@ -14,37 +11,13 @@ class AllArticlesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: ColorsManager.mainColor,
       body: SafeArea(
         child: Column(
           children: [
             // Header with globe decoration
-            Container(
-              height: 300.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: ColorsManager.mainColor,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              child: Stack(
-                children: [
-                  // Back button and profile
-                  CustomAppBar(),
-                  // Globe image
-                  Positioned(
-                    right: 0,
-                    top: 20.h,
-                    child: Image.asset(
-                      Assets.figuresWorldGlobeBooks,
-                      height: 280.h,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            GlobeAppbarWidget(),
             // Articles List
             Expanded(
               child: Container(

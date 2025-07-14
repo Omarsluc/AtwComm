@@ -1,9 +1,7 @@
 import 'package:atw_comm/core/widgets/app_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../core/theming/colors.dart';
 import '../../../generated/assets.dart';
 import 'landing_screen.dart';
@@ -188,28 +186,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     child: Column(
                       children: [
                         // Logo/Icon
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Icon(
-                            Icons.school,
-                            size: 30,
-                            color: Color(0xFF8B5CF6),
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
+                        SvgPicture.asset(Assets.iconsAtwLogoPurple,height: 80.h,color: ColorsManager.mainColor,),
+                        SizedBox(height: 24.h),
 
                         // Title
                         RichText(
                           textAlign: TextAlign.center,
-                          text: const TextSpan(
+                          text: TextSpan(
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 24.sp,
                               color: Colors.black,
                             ),
                             children: [
@@ -224,7 +209,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         // Subtitle
                         Text(
                           'Access insightful articles and start growing now.',
@@ -242,7 +227,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             context,
                             MaterialPageRoute(builder: (context) => LandingScreen()),
                           );
-                        }, myText: 'Get Started', iconPath: '')
+                        }, myText: 'Get Started',)
                       ],
                     ),
                   ),

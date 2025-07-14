@@ -45,7 +45,7 @@ class ElevenLabsService {
     required String voiceId,
     double stability = 0.5,
     double similarityBoost = 0.5,
-    String modelId = 'eleven_monolingual_v1',
+    String modelId = 'eleven_multilingual_v2',
   }) async {
     try {
       final response = await _dio.post(

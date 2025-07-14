@@ -1,15 +1,11 @@
+import 'package:atw_comm/features/articles/views/article_details_screen.dart';
+import 'package:atw_comm/features/articles/views/articles_categories_screen.dart';
 import 'package:atw_comm/features/onboarding/views/onboarding_screen.dart';
-import 'package:atw_comm/features/staff/views/add_article_screen.dart';
-import 'package:atw_comm/features/staff/views/my_articles_screen.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'core/routing/app_router.dart';
-import 'core/routing/routes.dart';
-import 'features/onboarding/views/landing_screen.dart';
-import 'features/staff/views/staff_screen.dart';
 
 
 class MainApp extends StatelessWidget {

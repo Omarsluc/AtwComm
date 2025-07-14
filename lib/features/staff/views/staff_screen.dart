@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/routing/routes.dart';
+import '../../../core/utils/consts.dart';
 import '../../../core/widgets/article_list_item.dart';
 import '../../../generated/assets.dart';
 
@@ -38,7 +39,7 @@ class StaffScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hello, Omar',
+                      'Hello, ${userNameIdentified ?? ''}',
                       style: GoogleFonts.montserrat(
                           fontSize: 28.sp,
                           fontWeight: FontWeight.w700,
@@ -153,7 +154,7 @@ class StaffScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 // Section Title
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +172,7 @@ class StaffScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 // Filter Chips
                 Row(
                   children: [
@@ -202,7 +203,7 @@ class StaffScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 // Article List
                 Expanded(
                   child: ListView(
