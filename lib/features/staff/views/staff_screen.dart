@@ -1,6 +1,7 @@
 import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
+import 'package:atw_comm/features/articles/model/podcast_model.dart';
 import 'package:atw_comm/features/staff/views/widgets/add_new_article_container_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +14,8 @@ import '../../../core/widgets/article_list_item.dart';
 import '../../../generated/assets.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../articles/views/play_podcast_screen.dart';
+
 class StaffScreen extends StatefulWidget {
   const StaffScreen({super.key});
 
@@ -23,7 +26,7 @@ class StaffScreen extends StatefulWidget {
 class _StaffScreenState extends State<StaffScreen> {
   PodcastTypes? selectedType;
   bool isLoading = false;
-  List<Map<String, dynamic>> podcasts = [];
+  List<Podcast> podcasts = [];
 
   final Map<String, PodcastTypes?> _typeMapping = {
     'All': null,
@@ -201,6 +204,7 @@ class _StaffScreenState extends State<StaffScreen> {
                           return Padding(
                             padding: EdgeInsets.only(bottom: 16.h),
                             child: ArticleListItem(
+                              onTap: (){},
                               articleType: ArticleType.uiUx,
                               title: 'Loading...',
                               time: '---',
@@ -229,12 +233,22 @@ class _StaffScreenState extends State<StaffScreen> {
                       shrinkWrap: true,
                       itemCount: podcasts.length,
                       itemBuilder: (context, index) {
-                        final podcast = podcasts[index];
+                        final Podcast podcast = podcasts[index];
                         return ArticleListItem(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PlayPodcastScreen(
+                                  podcast: podcast,
+                                ),
+                              ),
+                            );
+                          },
                           articleType: ArticleType.uiUx,
-                          title: podcast['title'] ?? '',
+                          title: podcast.title ?? '',
                           time:
-                              '${DateTime.parse(podcast['created_at']).difference(DateTime.now()).inHours.abs()}h ago',
+                              '${DateTime.parse(podcast.createdAt.toString()).difference(DateTime.now()).inHours.abs()}h ago',
                         );
                       },
                     ),

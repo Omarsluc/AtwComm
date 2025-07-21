@@ -81,8 +81,8 @@ class AddNewArticleCardWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 110.h,
-                  height: 110.w,
+                  width: 140.h,
+                  height: 140.w,
                   child: Image.asset(
                     Assets.figuresGuyReading,
                     fit: BoxFit.contain,

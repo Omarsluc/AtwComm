@@ -29,10 +29,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => AllArticlesScreen(),
         );
-      case Routes.articleDetailsScreen:
-        return MaterialPageRoute(
-          builder: (_) => PlayPodcastScreen(),
-        );
+      // case Routes.articleDetailsScreen:
+      //   return MaterialPageRoute(
+      //     builder: (_) => PlayPodcastScreen(podcast: null,),
+      //   );
       case Routes.articlesCategoriesScreen:
         return MaterialPageRoute(
           builder: (_) => ArticlesCategoriesScreen(),

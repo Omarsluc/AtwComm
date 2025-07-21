@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:atw_comm/core/utils/consts.dart';
+import 'package:atw_comm/features/articles/model/podcast_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
@@ -31,20 +32,20 @@ Future<bool> ensureUserExists(String userName) async {
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchPodcastsByType(String type) async {
+Future<List<Podcast>> fetchPodcastsByType(String type) async {
   final response = await supabase
       .from('podcasts')
       .select()
       .eq('type', type)
       .order('created_at', ascending: false);
   if (response is List) {
-    return List<Map<String, dynamic>>.from(response);
+    return response.map((e) => Podcast.fromJson(e)).toList();
   } else {
     return [];
   }
 }
 
-Future<List<Map<String, dynamic>>> fetchAllPodcasts() async {
+Future<List<Podcast>> fetchAllPodcasts() async {
   try {
     final response = await supabase
         .from('podcasts')
@@ -52,7 +53,7 @@ Future<List<Map<String, dynamic>>> fetchAllPodcasts() async {
         .order('created_at', ascending: false);
 
     if (response is List) {
-      return List<Map<String, dynamic>>.from(response);
+      return response.map((e) => Podcast.fromJson(e)).toList();
     } else {
       return [];
     }

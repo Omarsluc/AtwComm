@@ -14,17 +14,17 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class PlayPodcastScreen extends StatefulWidget {
-  final Podcast podcast;
-  const PlayPodcastScreen({super.key, required this.podcast});
+class PlayBotPodcastScreen extends StatefulWidget {
+  final String podcastText;
+  const PlayBotPodcastScreen({super.key, required this.podcastText});
 
   @override
-  State<PlayPodcastScreen> createState() => _PlayPodcastScreenState();
+  State<PlayBotPodcastScreen> createState() => _PlayBotPodcastScreenState();
 }
 
-class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
+class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
   final ElevenLabsService _ttsService =
-      ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+  ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
   bool _isPlaying = false;
   bool _isLoadingAudio = false;
   Duration _audioDuration = Duration.zero;
@@ -72,10 +72,10 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
 
   Future<void> _prepareAudio() async {
     setState(() => _isLoadingAudio = true);
-    log(widget.podcast.article);
+    log(widget.podcastText);
     try {
       final audioBytes = await _ttsService.textToSpeech(
-          text: widget.podcast.article, voiceId: _voiceId);
+          text: widget.podcastText, voiceId: _voiceId);
       final tempDir = await getTemporaryDirectory();
       final tempFile = File(
           '${tempDir.path}/preloaded_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
@@ -173,7 +173,7 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                           ),
                           SizedBox(height: 8.h),
                           PublicText(
-                            text: '3D Illustrations',
+                            text: 'Podcast',
                             textTheme: TextStyles.font13DarkBlueMedium
                                 .copyWith(fontWeight: FontWeight.w500),
                             color: ColorsManager.darkBlue,
@@ -186,7 +186,7 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                     SizedBox(height: 24.h),
                     // Title
                     PublicText(
-                      text: widget.podcast.title,
+                      text: 'Ai Podcast',
                       textTheme: TextStyles.font24BlueBold.copyWith(
                         color: ColorsManager.mainColor,
                         fontWeight: FontWeight.bold,
@@ -198,7 +198,7 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                     ),
                     SizedBox(height: 4.h),
                     PublicText(
-                      text: 'by/ ${widget.podcast.authorName}',
+                      text: 'by/ your favourite bot',
                       textTheme: TextStyles.font12GrayRegular,
                       color: ColorsManager.gray,
                       fontWeight: FontWeight.normal,
@@ -215,9 +215,9 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                             icon: Icon(Icons.replay_10,
                                 color: ColorsManager.mainColor, size: 28),
                             onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekBackward,
+                            (_audioFilePath == null || _isLoadingAudio)
+                                ? null
+                                : _seekBackward,
                           ),
                           Container(
                             width: 70.w,
@@ -229,44 +229,44 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                             ),
                             child: _isLoadingAudio
                                 ? Center(
-                                    child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: CircularProgressIndicator(
-                                            color: ColorsManager.mainColor,
-                                            strokeWidth: 3)))
+                                child: SizedBox(
+                                    width: 32,
+                                    height: 32,
+                                    child: CircularProgressIndicator(
+                                        color: ColorsManager.mainColor,
+                                        strokeWidth: 3)))
                                 : IconButton(
-                                    icon: Icon(
-                                      _isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: ColorsManager.mainColor,
-                                      size: 40,
-                                    ),
-                                    onPressed: (_audioFilePath == null ||
-                                            _isLoadingAudio)
-                                        ? null
-                                        : () {
-                                            if (_isPlaying) {
-                                              _ttsService.pause();
-                                            } else if (_audioPosition >
-                                                    Duration.zero &&
-                                                _audioPosition <
-                                                    _audioDuration) {
-                                              _resumeTTS();
-                                            } else {
-                                              _playTTS();
-                                            }
-                                          },
-                                  ),
+                              icon: Icon(
+                                _isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                                color: ColorsManager.mainColor,
+                                size: 40,
+                              ),
+                              onPressed: (_audioFilePath == null ||
+                                  _isLoadingAudio)
+                                  ? null
+                                  : () {
+                                if (_isPlaying) {
+                                  _ttsService.pause();
+                                } else if (_audioPosition >
+                                    Duration.zero &&
+                                    _audioPosition <
+                                        _audioDuration) {
+                                  _resumeTTS();
+                                } else {
+                                  _playTTS();
+                                }
+                              },
+                            ),
                           ),
                           IconButton(
                             icon: Icon(Icons.forward_10,
                                 color: ColorsManager.mainColor, size: 28),
                             onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekForward,
+                            (_audioFilePath == null || _isLoadingAudio)
+                                ? null
+                                : _seekForward,
                           ),
                         ],
                       ),
@@ -281,14 +281,14 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                             value: _audioPosition.inMilliseconds
                                 .toDouble()
                                 .clamp(0,
-                                    _audioDuration.inMilliseconds.toDouble()),
+                                _audioDuration.inMilliseconds.toDouble()),
                             min: 0.0,
                             max: _audioDuration.inMilliseconds.toDouble() > 0
                                 ? _audioDuration.inMilliseconds.toDouble()
                                 : 1.0,
                             onChanged: (value) async {
                               final seekTo =
-                                  Duration(milliseconds: value.toInt());
+                              Duration(milliseconds: value.toInt());
                               await _ttsService.audioPlayer.seek(seekTo);
                             },
                             activeColor: ColorsManager.mainColor,

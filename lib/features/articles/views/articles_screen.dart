@@ -7,6 +7,8 @@ import '../../../core/theming/colors.dart';
 import '../../../core/theming/style.dart';
 import '../../../core/widgets/custom_appbar.dart';
 import '../../../core/Api/supabaseApi.dart';
+import '../model/podcast_model.dart';
+import 'play_podcast_screen.dart';
 
 class ArticlesScreen extends StatelessWidget {
   const ArticlesScreen({Key? key, required this.type}) : super(key: key);
@@ -52,7 +54,7 @@ class ArticlesScreen extends StatelessWidget {
               ),
               SizedBox(height: 24.h),
               Expanded(
-                child: FutureBuilder<List<Map<String, dynamic>>>(
+                child: FutureBuilder<List<Podcast>>(
                   future: fetchPodcastsByType(dbType),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,11 +72,22 @@ class ArticlesScreen extends StatelessWidget {
                       separatorBuilder: (_, __) => SizedBox(height: 18.h),
                       itemBuilder: (context, index) {
                         final podcast = podcasts[index];
-                        return _PodcastItem(
-                          number: index + 1,
-                          color: colors[index % colors.length],
-                          title: podcast['title'] ?? '',
-                          subtitle: podcast['article'] ?? '',
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PlayPodcastScreen(podcast: podcast),
+                              ),
+                            );
+                          },
+                          child: _PodcastItem(
+                            number: index + 1,
+                            color: colors[index % colors.length],
+                            title: podcast.title,
+                            subtitle: podcast.article,
+                          ),
                         );
                       },
                     );

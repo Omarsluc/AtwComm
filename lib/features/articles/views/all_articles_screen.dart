@@ -2,6 +2,8 @@ import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/theming/style.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
 import 'package:atw_comm/core/widgets/article_list_item.dart';
+import 'package:atw_comm/features/articles/model/podcast_model.dart';
+import 'package:atw_comm/features/articles/views/play_podcast_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -16,7 +18,7 @@ class AllArticlesScreen extends StatefulWidget {
 
 class _AllArticlesScreenState extends State<AllArticlesScreen> {
   bool isLoading = true;
-  List<Map<String, dynamic>> podcasts = [];
+  List<Podcast> podcasts = [];
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
                                   SizedBox(height: 16.h),
                               itemBuilder: (context, index) {
                                 return ArticleListItem(
+                                  onTap: () {},
                                   title: 'Loading...',
                                   time: '---',
                                   articleType: ArticleType.uiUx,
@@ -110,10 +113,20 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
                                 itemBuilder: (context, index) {
                                   final podcast = podcasts[index];
                                   return ArticleListItem(
-                                    title: podcast['title'] ?? '',
+                                    title: podcast.title,
                                     time:
-                                        '3min', // You can calculate or fetch real duration if available
+                                        '${DateTime.now().difference(podcast.createdAt).inHours.abs()}h ago', // You can calculate or fetch real duration if available
                                     articleType: ArticleType.uiUx,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => PlayPodcastScreen(
+                                            podcast: podcast,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
                               ),
