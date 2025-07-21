@@ -13,14 +13,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class ArticleDetailsScreen extends StatefulWidget {
-  const ArticleDetailsScreen({super.key});
+class PlayPodcastScreen extends StatefulWidget {
+  const PlayPodcastScreen({super.key});
 
   @override
-  State<ArticleDetailsScreen> createState() => _ArticleDetailsScreenState();
+  State<PlayPodcastScreen> createState() => _PlayPodcastScreenState();
 }
 
-class _ArticleDetailsScreenState extends State<ArticleDetailsScreen> {
+class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
   final ElevenLabsService _ttsService =
       ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
   bool _isPlaying = false;

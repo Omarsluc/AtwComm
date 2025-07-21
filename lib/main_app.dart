@@ -1,4 +1,4 @@
-import 'package:atw_comm/features/articles/views/article_details_screen.dart';
+import 'package:atw_comm/features/articles/views/play_podcast_screen.dart';
 import 'package:atw_comm/features/articles/views/articles_categories_screen.dart';
 import 'package:atw_comm/features/onboarding/views/onboarding_screen.dart';
 import 'package:flutter/material.dart';

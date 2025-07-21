@@ -5,8 +5,9 @@ import 'package:atw_comm/core/widgets/filter_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../../core/Api/supabaseApi.dart';
 import '../../../core/helpers/spacing.dart';
+import '../../../core/utils/enums.dart';
 
 class AddArticleScreen extends StatefulWidget {
   const AddArticleScreen({Key? key}) : super(key: key);
@@ -16,41 +17,62 @@ class AddArticleScreen extends StatefulWidget {
 }
 
 class _AddArticleScreenState extends State<AddArticleScreen> {
-  final List<String> _labels = ['UI/UX', 'Development', 'Design'];
-  String? _selectedPhoto;
-  String? _selectedVideo;
-  String? _selectedFile;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _articleController = TextEditingController();
+  String? _selectedType;
+  bool _isLoading = false;
 
-  void _showAddLabelDialog() {
-    final TextEditingController labelController = TextEditingController();
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Add New Label'),
-            content: TextField(
-              controller: labelController,
-              decoration: const InputDecoration(hintText: 'Enter label...'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (labelController.text.isNotEmpty) {
-                    setState(() {
-                      _labels.add(labelController.text);
-                    });
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text('Add'),
-              ),
-            ],
-          );
-        });
+  final Map<String, PodcastTypes> _typeMapping = {
+    'Mobile': PodcastTypes.mobile,
+    'Backend': PodcastTypes.backend,
+    'Design': PodcastTypes.design,
+    'AI/ML': PodcastTypes.ai,
+    'Managing': PodcastTypes.managing,
+    'Frontend': PodcastTypes.front,
+    'Security': PodcastTypes.security,
+    'Others': PodcastTypes.others,
+  };
+
+  Future<void> _createPodcast() async {
+    if (_titleController.text.isEmpty ||
+        _articleController.text.isEmpty ||
+        _selectedType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final authorName = await getCurrentUserName();
+      if (authorName == null) {
+        throw Exception('Could not get current user');
+      }
+
+      final podcast = await createPodcast(
+        title: _titleController.text,
+        article: _articleController.text,
+        type: podcastTypeToDbString(_typeMapping[_selectedType]!),
+        authorName: authorName,
+      );
+
+      if (podcast != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Podcast created successfully!')),
+        );
+        Navigator.pop(context);
+      } else {
+        throw Exception('Failed to create podcast');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -61,19 +83,16 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
       backgroundColor: ColorsManager.mainColor,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.sizeOf(context).height,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(topRight: Radius.circular(40)),
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
-                  const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -83,7 +102,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                         child: Icon(Icons.person,
                             color: Colors.deepPurple, size: 32),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       SizedBox(
                         width: 350.w,
                         child: Text(
@@ -102,82 +121,8 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                       ),
                     ],
                   ),
-                  verticalSpace(10),
-                  // Media/File Attach Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.photo, color: Colors.deepPurple),
-                        tooltip: 'Add Photo',
-                        onPressed: () async {
-                          // TODO: Implement image picker
-                          setState(() {
-                            _selectedPhoto = 'photo_example.jpg';
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.videocam,
-                            color: Colors.deepPurple),
-                        tooltip: 'Add Video',
-                        onPressed: () async {
-                          // TODO: Implement video picker
-                          setState(() {
-                            _selectedVideo = 'video_example.mp4';
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.attach_file,
-                            color: Colors.deepPurple),
-                        tooltip: 'Add File',
-                        onPressed: () async {
-                          // TODO: Implement file picker
-                          setState(() {
-                            _selectedFile = 'file_example.pdf';
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  // Preview selected files
-                  if (_selectedPhoto != null ||
-                      _selectedVideo != null ||
-                      _selectedFile != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Wrap(
-                        spacing: 8,
-                        children: [
-                          if (_selectedPhoto != null)
-                            Chip(
-                              avatar: const Icon(Icons.photo,
-                                  color: Colors.deepPurple),
-                              label: Text(_selectedPhoto!),
-                              onDeleted: () =>
-                                  setState(() => _selectedPhoto = null),
-                            ),
-                          if (_selectedVideo != null)
-                            Chip(
-                              avatar: const Icon(Icons.videocam,
-                                  color: Colors.deepPurple),
-                              label: Text(_selectedVideo!),
-                              onDeleted: () =>
-                                  setState(() => _selectedVideo = null),
-                            ),
-                          if (_selectedFile != null)
-                            Chip(
-                              avatar: const Icon(Icons.attach_file,
-                                  color: Colors.deepPurple),
-                              label: Text(_selectedFile!),
-                              onDeleted: () =>
-                                  setState(() => _selectedFile = null),
-                            ),
-                        ],
-                      ),
-                    ),
-                  // Text Field
+                  verticalSpace(20),
+                  // Title Field
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFF6F5FF),
@@ -185,60 +130,75 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                       border: Border.all(
                           color: const Color(0xFFD9D4F8), width: 1.5),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: const TextField(
-                      maxLines: null,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: _titleController,
                       decoration: InputDecoration(
-                        hintText: 'write here',
+                        hintText: 'Enter title...',
                         border: InputBorder.none,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  // Labels
+                  verticalSpace(16),
+                  // Article Field
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF6F5FF),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: const Color(0xFFD9D4F8), width: 1.5),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: _articleController,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: 'Write your article here...',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  verticalSpace(16),
+                  // Type Selection
+                  Text(
+                    'Select Type',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  verticalSpace(8),
                   Wrap(
                     spacing: 8.0,
-                    runSpacing: 4.0,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      ..._labels
-                          .map((label) => FilterChipWidget(label: label))
-                          .toList(),
-                      InkWell(
-                        onTap: _showAddLabelDialog,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Chip(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          avatar: const Icon(Icons.add,
-                              size: 18, color: Colors.deepPurple),
-                          label: const Text('Add Label',
-                              style: TextStyle(color: Colors.deepPurple)),
-                          backgroundColor: Colors.grey.shade200,
+                    runSpacing: 8.0,
+                    children: _typeMapping.keys.map((type) {
+                      final isSelected = type == _selectedType;
+                      return FilterChip(
+                        selected: isSelected,
+                        label: Text(type),
+                        onSelected: (bool selected) {
+                          setState(() {
+                            _selectedType = selected ? type : null;
+                          });
+                        },
+                        backgroundColor: isSelected
+                            ? ColorsManager.mainColor
+                            : Colors.grey[200],
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black87,
                         ),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
-                  const SizedBox(height: 32),
-                  // Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                          child: AppButton(
-                              padding: EdgeInsets.all(0),
-                              onPressed: () {},
-                              myText: 'My Articles')),
-                      horizontalSpace(20),
-                      Expanded(
-                          child: AppButton(
-                        padding: EdgeInsets.all(0),
-                        onPressed: () {},
-                        myText: 'Staff Articles',
-                        isSecondary: true,
-                      )),
-                    ],
+                  verticalSpace(32),
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      myText: _isLoading ? 'Creating...' : 'Create Podcast',
+                      onPressed: _isLoading ? null : _createPodcast,
+                    ),
                   ),
                 ],
               ),
@@ -247,5 +207,12 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _articleController.dispose();
+    super.dispose();
   }
 }

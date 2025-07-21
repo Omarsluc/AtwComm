@@ -134,7 +134,7 @@ class _CameraScreenState extends State<CameraScreen>
 
       if (response.statusCode == 200) {
         String faceRecognized =
-            response.data['recognized']?.toString().toLowerCase() ?? "unknown";
+            response.data['recognized']['name']?.toString().toLowerCase() ?? "unknown";
 
         if (faceRecognized != 'unknown') {
           userNameIdentified = faceRecognized;
@@ -173,7 +173,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   Future<Response> sendImageToApi(XFile imageFile) async {
     final dio = Dio();
-    const url = "https://ml-test.atwdemo.com/recognize_faces";
+    const url = "https://ml-test.atwdemo.com/recognize";
 
     try {
       FormData formData = FormData.fromMap({

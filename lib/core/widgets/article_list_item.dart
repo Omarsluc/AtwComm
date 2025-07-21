@@ -87,13 +87,13 @@ class ArticleListItem extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.grey,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(
+          //     Icons.more_vert,
+          //     color: Colors.grey,
+          //   ),
+          // ),
         ],
       ),
     );

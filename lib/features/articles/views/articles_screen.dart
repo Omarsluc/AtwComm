@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:atw_comm/core/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theming/colors.dart';
@@ -6,12 +9,11 @@ import '../../../core/widgets/custom_appbar.dart';
 import '../../../core/Api/supabaseApi.dart';
 
 class ArticlesScreen extends StatelessWidget {
-  const ArticlesScreen({Key? key}) : super(key: key);
+  const ArticlesScreen({Key? key, required this.type}) : super(key: key);
+  final PodcastTypes type;
 
   @override
   Widget build(BuildContext context) {
-    final String? category =
-        ModalRoute.of(context)?.settings.arguments as String?;
     final List<Color> colors = [
       const Color(0xFFFF7A4D),
       const Color(0xFFB7E28A),
@@ -19,10 +21,9 @@ class ArticlesScreen extends StatelessWidget {
       const Color(0xFF4DB8FF),
       const Color(0xFF8C8CFF),
     ];
-    // Map display category to DB type if needed
-    String? podcastType = category;
-    // Example: if display name and type differ, map here
-    // if (category == 'AI & ML') podcastType = 'ai_ml';
+    final String dbType = podcastTypeToDbString(type);
+    final String displayTitle =
+        type.name[0].toUpperCase() + type.name.substring(1);
 
     return Scaffold(
       backgroundColor: ColorsManager.mainColor,
@@ -42,7 +43,7 @@ class ArticlesScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                category != null ? '$category Podcasts' : 'All Podcasts',
+                '$displayTitle Podcasts',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 18.sp,
@@ -52,9 +53,7 @@ class ArticlesScreen extends StatelessWidget {
               SizedBox(height: 24.h),
               Expanded(
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: podcastType != null
-                      ? fetchPodcastsByType(podcastType)
-                      : Future.value([]),
+                  future: fetchPodcastsByType(dbType),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

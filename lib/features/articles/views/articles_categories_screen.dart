@@ -1,8 +1,10 @@
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/theming/style.dart';
+import 'package:atw_comm/core/utils/enums.dart';
 import 'package:atw_comm/core/widgets/app_button.dart';
 import 'package:atw_comm/core/widgets/globe_appbar_widget.dart';
 import 'package:atw_comm/core/widgets/public_text.dart';
+import 'package:atw_comm/features/articles/views/articles_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/routing/routes.dart';
@@ -36,7 +38,7 @@ class ArticlesCategoriesScreen extends StatelessWidget {
         height: 180.h,
       ),
       _CategoryCardData(
-        title: 'Ai',
+        title: 'AI / ML',
         count: 35,
         bgColor: const Color(0xFFFFE6E6),
         image: Assets.figuresRobot,
@@ -50,7 +52,7 @@ class ArticlesCategoriesScreen extends StatelessWidget {
         height: 190.h,
       ),
       _CategoryCardData(
-        title: 'Front',
+        title: 'Frontend',
         count: 12,
         bgColor: const Color(0xFFE6E6FF),
         image: Assets.figuresFrontEngineering,
@@ -92,7 +94,9 @@ class ArticlesCategoriesScreen extends StatelessWidget {
                     myText: 'Create your own podcast',
                     onPressed: () {
                       Navigator.pushNamed(
-                          context, Routes.createAIPodcastScreen);
+                        context,
+                        Routes.createAIPodcastScreen,
+                      );
                     },
                   ),
                 ),
@@ -112,27 +116,77 @@ class ArticlesCategoriesScreen extends StatelessWidget {
                 child: Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-                  child: GridView.builder(
-                    itemCount: categories.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 18.h,
-                      crossAxisSpacing: 18.w,
-                      childAspectRatio: 0.95,
-                    ),
-                    itemBuilder: (context, index) {
-                      final cat = categories[index];
-                      return _CategoryCard(
-                        data: cat,
-                        onTap: () {
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
                           Navigator.pushNamed(
-                            context,
-                            Routes.articlesScreen,
-                            arguments: cat.title,
-                          );
+                              context, Routes.allArticlesScreen);
                         },
-                      );
-                    },
+                        child: const Text(
+                          'View All',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: categories.length,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 18.h,
+                            crossAxisSpacing: 18.w,
+                            childAspectRatio: 0.95,
+                          ),
+                          itemBuilder: (context, index) {
+                            final cat = categories[index];
+                            PodcastTypes type;
+                            switch (cat.title) {
+                              case 'Mobile':
+                                type = PodcastTypes.mobile;
+                                break;
+                              case 'Backend':
+                                type = PodcastTypes.backend;
+                                break;
+                              case 'Design':
+                                type = PodcastTypes.design;
+                                break;
+                              case 'Ai':
+                                type = PodcastTypes.ai;
+                                break;
+                              case 'Managing':
+                                type = PodcastTypes.managing;
+                                break;
+                              case 'Front':
+                                type = PodcastTypes.front;
+                                break;
+                              case 'Security':
+                                type = PodcastTypes.security;
+                                break;
+                              case 'Others':
+                              default:
+                                type = PodcastTypes.others;
+                            }
+                            return _CategoryCard(
+                              data: cat,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ArticlesScreen(type: type),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -197,17 +251,17 @@ class _CategoryCard extends StatelessWidget {
                 padding: EdgeInsets.zero,
               ),
               SizedBox(height: 6.h),
-              PublicText(
-                text: '${data.count} Articles',
-                textTheme: TextStyles.font12GrayRegular.copyWith(
-                  color: ColorsManager.gray,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 13.sp,
-                ),
-                color: ColorsManager.gray,
-                fontWeight: FontWeight.normal,
-                padding: EdgeInsets.zero,
-              ),
+              // PublicText(
+              //   text: '${data.count} Articles',
+              //   textTheme: TextStyles.font12GrayRegular.copyWith(
+              //     color: ColorsManager.gray,
+              //     fontWeight: FontWeight.normal,
+              //     fontSize: 13.sp,
+              //   ),
+              //   color: ColorsManager.gray,
+              //   fontWeight: FontWeight.normal,
+              //   padding: EdgeInsets.zero,
+              // ),
               SizedBox(
                 height: 100.h,
                 child: Image.asset(

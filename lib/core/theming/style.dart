@@ -12,6 +12,12 @@ class TextStyles {
     color: Colors.black,
   );
 
+  static TextStyle font20BlackBold = GoogleFonts.montserrat(
+    fontSize: 20.sp,
+    fontWeight: FontWeightHelper.bold,
+    color: Colors.black,
+  );
+
   static TextStyle font32BlueBold = GoogleFonts.montserrat(
     fontSize: 32.sp,
     fontWeight: FontWeightHelper.bold,

@@ -1,62 +1,128 @@
 import 'package:atw_comm/core/theming/colors.dart';
+import 'package:atw_comm/core/theming/style.dart';
+import 'package:atw_comm/core/widgets/custom_appbar.dart';
 import 'package:atw_comm/core/widgets/article_list_item.dart';
-import 'package:atw_comm/core/widgets/globe_appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import '../../../core/Api/supabaseApi.dart';
 
-
-class AllArticlesScreen extends StatelessWidget {
+class AllArticlesScreen extends StatefulWidget {
   const AllArticlesScreen({super.key});
+
+  @override
+  State<AllArticlesScreen> createState() => _AllArticlesScreenState();
+}
+
+class _AllArticlesScreenState extends State<AllArticlesScreen> {
+  bool isLoading = true;
+  List<Map<String, dynamic>> podcasts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAll();
+  }
+
+  Future<void> _fetchAll() async {
+    setState(() => isLoading = true);
+    podcasts = await fetchAllPodcasts();
+    setState(() => isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: ColorsManager.mainColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header with globe decoration
-            GlobeAppbarWidget(),
-            // Articles List
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  ),),
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                  itemCount: 10, // Replace with actual article count
-                  itemBuilder: (context, index) {
-                    final articleTypes = ArticleType.values;
-                    final articleType = articleTypes[index % articleTypes.length];
-                    String title;
-                    switch (articleType) {
-                      case ArticleType.uiUx:
-                        title = 'UI UX Article';
-                        break;
-                      case ArticleType.backend:
-                        title = 'Backend';
-                        break;
-                      case ArticleType.devOps:
-                        title = 'DevOps';
-                        break;
-                    }
-
-                    return ArticleListItem(
-                      title: title,
-                      time: '2h 15m',
-                      articleType: articleType,
-                    );
-                  },
+      appBar: CustomAppBar(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40.r),
+                  topRight: Radius.circular(40.r),
                 ),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: Text('User Experience Articles',
+                        style: TextStyles.font20BlackBold),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: Text(
+                      'Start your learning Journey',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: isLoading
+                        ? Skeletonizer(
+                            enabled: true,
+                            child: ListView.separated(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w, vertical: 20.h),
+                              itemCount: 6,
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 16.h),
+                              itemBuilder: (context, index) {
+                                return ArticleListItem(
+                                  title: 'Loading...',
+                                  time: '---',
+                                  articleType: ArticleType.uiUx,
+                                );
+                              },
+                            ),
+                          )
+                        : podcasts.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No articles found',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              )
+                            : ListView.separated(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 20.h),
+                                itemCount: podcasts.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: 16.h),
+                                itemBuilder: (context, index) {
+                                  final podcast = podcasts[index];
+                                  return ArticleListItem(
+                                    title: podcast['title'] ?? '',
+                                    time:
+                                        '3min', // You can calculate or fetch real duration if available
+                                    articleType: ArticleType.uiUx,
+                                  );
+                                },
+                              ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
