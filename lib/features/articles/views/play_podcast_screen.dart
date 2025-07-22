@@ -67,6 +67,12 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
         _isPlaying = state == PlayerState.playing;
       });
     });
+    _ttsService.audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        _audioPosition = Duration.zero;
+        _isPlaying = false;
+      });
+    });
     _prepareAudio();
   }
 
@@ -156,32 +162,24 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                   children: [
                     SizedBox(height: 24.h),
                     // Category Card
-                    Container(
-                      width: 120.w,
-                      height: 120.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE6FFF6),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 60.h,
-                            child: Image.asset(Assets.figuresOnboardingPieChart,
-                                fit: BoxFit.contain),
-                          ),
-                          SizedBox(height: 8.h),
-                          PublicText(
-                            text: '3D Illustrations',
-                            textTheme: TextStyles.font13DarkBlueMedium
-                                .copyWith(fontWeight: FontWeight.w500),
-                            color: ColorsManager.darkBlue,
-                            fontWeight: FontWeight.w500,
-                            padding: EdgeInsets.zero,
-                          ),
-                        ],
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 250.h,
+                          child: Image.asset(Assets.figuresBoyHeadset,
+                              fit: BoxFit.contain),
+                        ),
+                        SizedBox(height: 8.h),
+                        PublicText(
+                          text: 'User Experience',
+                          textTheme: TextStyles.font13DarkBlueMedium
+                              .copyWith(fontWeight: FontWeight.w500),
+                          color: ColorsManager.darkBlue,
+                          fontWeight: FontWeight.w500,
+                          padding: EdgeInsets.zero,
+                        ),
+                      ],
                     ),
                     SizedBox(height: 24.h),
                     // Title

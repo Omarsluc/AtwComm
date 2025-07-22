@@ -4,6 +4,7 @@ class Assets {
 
   static const String figuresBackgroundBubble = 'assets/figures/background_bubble.svg';
   static const String figuresBot = 'assets/figures/bot.png';
+  static const String figuresBoyHeadset = 'assets/figures/boy_headset.png';
   static const String figuresBoyUsingLaptop = 'assets/figures/boy_using_laptop.png';
   static const String figuresCalendar = 'assets/figures/calendar.png';
   static const String figuresFemaleOnboradingFigure = 'assets/figures/female_onborading_figure.png';
