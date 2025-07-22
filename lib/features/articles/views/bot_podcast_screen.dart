@@ -13,6 +13,7 @@ import 'package:atw_comm/core/service/elevenlabs_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:atw_comm/core/service/textToSpeach.dart';
 
 class PlayBotPodcastScreen extends StatefulWidget {
   final String podcastText;
@@ -24,7 +25,7 @@ class PlayBotPodcastScreen extends StatefulWidget {
 
 class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
   final ElevenLabsService _ttsService =
-  ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+      ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
   bool _isPlaying = false;
   bool _isLoadingAudio = false;
   Duration _audioDuration = Duration.zero;
@@ -46,7 +47,7 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
   final String _text = '';
 
   final String _voiceId =
-      'wxweiHvoC2r2jFM7mS8b'; // Egyptian Arabic voiceId from ElevenLabs
+      's3TPKV1kjDlVtZbl4Ksh'; // Egyptian Arabic voiceId from ElevenLabs
 
   @override
   void initState() {
@@ -67,6 +68,13 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
         _isPlaying = state == PlayerState.playing;
       });
     });
+    // Add listener to reset position when playback completes
+    _ttsService.audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        _audioPosition = Duration.zero;
+        _isPlaying = false;
+      });
+    });
     _prepareAudio();
   }
 
@@ -76,18 +84,26 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
     try {
       final audioBytes = await _ttsService.textToSpeech(
           text: widget.podcastText, voiceId: _voiceId);
+      if (audioBytes == null || audioBytes.isEmpty) {
+        throw Exception('Audio bytes are empty');
+      }
       final tempDir = await getTemporaryDirectory();
       final tempFile = File(
           '${tempDir.path}/preloaded_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
       await tempFile.writeAsBytes(audioBytes);
       setState(() {
         _audioFilePath = tempFile.path;
+        _isLoadingAudio = false;
       });
     } catch (e) {
-      log(e.toString());
-      // Optionally handle error
+      log('ElevenLabs failed, falling back to FlutterTTS: $e');
+      // Fallback: Use FlutterTTS to speak directly
+      await TextToSpeechService.speak(text: widget.podcastText);
+      setState(() {
+        _audioFilePath = null; // disables the play button/slider
+        _isLoadingAudio = false;
+      });
     }
-    setState(() => _isLoadingAudio = false);
   }
 
   @override
@@ -157,8 +173,6 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                     SizedBox(height: 24.h),
                     // Category Card
                     Container(
-                      width: 120.w,
-                      height: 120.w,
                       decoration: BoxDecoration(
                         color: const Color(0xFFE6FFF6),
                         borderRadius: BorderRadius.circular(24),
@@ -167,19 +181,12 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: 60.h,
-                            child: Image.asset(Assets.figuresOnboardingPieChart,
+                            height: 300.h,
+                            width: 300.w,
+                            child: Image.asset(Assets.figuresBot,
                                 fit: BoxFit.contain),
                           ),
                           SizedBox(height: 8.h),
-                          PublicText(
-                            text: 'Podcast',
-                            textTheme: TextStyles.font13DarkBlueMedium
-                                .copyWith(fontWeight: FontWeight.w500),
-                            color: ColorsManager.darkBlue,
-                            fontWeight: FontWeight.w500,
-                            padding: EdgeInsets.zero,
-                          ),
                         ],
                       ),
                     ),
@@ -215,9 +222,9 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                             icon: Icon(Icons.replay_10,
                                 color: ColorsManager.mainColor, size: 28),
                             onPressed:
-                            (_audioFilePath == null || _isLoadingAudio)
-                                ? null
-                                : _seekBackward,
+                                (_audioFilePath == null || _isLoadingAudio)
+                                    ? null
+                                    : _seekBackward,
                           ),
                           Container(
                             width: 70.w,
@@ -229,44 +236,44 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                             ),
                             child: _isLoadingAudio
                                 ? Center(
-                                child: SizedBox(
-                                    width: 32,
-                                    height: 32,
-                                    child: CircularProgressIndicator(
-                                        color: ColorsManager.mainColor,
-                                        strokeWidth: 3)))
+                                    child: SizedBox(
+                                        width: 32,
+                                        height: 32,
+                                        child: CircularProgressIndicator(
+                                            color: ColorsManager.mainColor,
+                                            strokeWidth: 3)))
                                 : IconButton(
-                              icon: Icon(
-                                _isPlaying
-                                    ? Icons.pause
-                                    : Icons.play_arrow,
-                                color: ColorsManager.mainColor,
-                                size: 40,
-                              ),
-                              onPressed: (_audioFilePath == null ||
-                                  _isLoadingAudio)
-                                  ? null
-                                  : () {
-                                if (_isPlaying) {
-                                  _ttsService.pause();
-                                } else if (_audioPosition >
-                                    Duration.zero &&
-                                    _audioPosition <
-                                        _audioDuration) {
-                                  _resumeTTS();
-                                } else {
-                                  _playTTS();
-                                }
-                              },
-                            ),
+                                    icon: Icon(
+                                      _isPlaying
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: ColorsManager.mainColor,
+                                      size: 40,
+                                    ),
+                                    onPressed: (_audioFilePath == null ||
+                                            _isLoadingAudio)
+                                        ? null
+                                        : () {
+                                            if (_isPlaying) {
+                                              _ttsService.pause();
+                                            } else if (_audioPosition >
+                                                    Duration.zero &&
+                                                _audioPosition <
+                                                    _audioDuration) {
+                                              _resumeTTS();
+                                            } else {
+                                              _playTTS();
+                                            }
+                                          },
+                                  ),
                           ),
                           IconButton(
                             icon: Icon(Icons.forward_10,
                                 color: ColorsManager.mainColor, size: 28),
                             onPressed:
-                            (_audioFilePath == null || _isLoadingAudio)
-                                ? null
-                                : _seekForward,
+                                (_audioFilePath == null || _isLoadingAudio)
+                                    ? null
+                                    : _seekForward,
                           ),
                         ],
                       ),
@@ -281,14 +288,14 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                             value: _audioPosition.inMilliseconds
                                 .toDouble()
                                 .clamp(0,
-                                _audioDuration.inMilliseconds.toDouble()),
+                                    _audioDuration.inMilliseconds.toDouble()),
                             min: 0.0,
                             max: _audioDuration.inMilliseconds.toDouble() > 0
                                 ? _audioDuration.inMilliseconds.toDouble()
                                 : 1.0,
                             onChanged: (value) async {
                               final seekTo =
-                              Duration(milliseconds: value.toInt());
+                                  Duration(milliseconds: value.toInt());
                               await _ttsService.audioPlayer.seek(seekTo);
                             },
                             activeColor: ColorsManager.mainColor,

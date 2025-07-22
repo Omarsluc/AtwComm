@@ -43,7 +43,11 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
       );
 
       if (response.statusCode == 200) {
-        final podcastText = response.data['podcast'];
+        final conversation = response.data['conversation'];
+        final podcastText = conversation is List
+            ? conversation.join('\n\n')
+            : (conversation ?? '');
+        log('text output : $podcastText');
         setState(() {
           _isLoading = false;
           _isReady = true;
