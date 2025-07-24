@@ -1,10 +1,15 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
+import 'dart:developer';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/service/elevenlabs_service.dart';
+import '../../../core/service/textToSpeach.dart';
 import 'article_state.dart';
+import '../model/podcast_model.dart';
 
 class ArticleCubit extends Cubit<ArticleState> {
-  final ElevenLabsService _ttsService;
 
   // Private state variables
   List<Voice> _voices = [];
@@ -13,10 +18,8 @@ class ArticleCubit extends Cubit<ArticleState> {
   String? _errorMessage;
   PlayerState _playerState = PlayerState.stopped;
 
-  ArticleCubit({required ElevenLabsService ttsService})
-      : _ttsService = ttsService,
+  ArticleCubit() :
         super(ArticleInitialState()) {
-    _setupPlayerStateListener();
   }
 
   // Getters to access state data
@@ -26,171 +29,42 @@ class ArticleCubit extends Cubit<ArticleState> {
   String? get errorMessage => _errorMessage;
   PlayerState get playerState => _playerState;
 
-  void _setupPlayerStateListener() {
-    _ttsService.audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      _playerState = state;
-      if (_currentText != null) {
-        switch (state) {
-          case PlayerState.playing:
-            emit(TTSPlaying());
-            break;
-          case PlayerState.paused:
-            emit(TTSPaused());
-            break;
-          case PlayerState.stopped:
-          case PlayerState.completed:
-            _currentText = null;
-            emit(TTSStopped());
-            break;
-          case PlayerState.disposed:
-            emit(TTSInitial());
-            break;
+
+
+  Future<void> prepareAudio(Podcast podcast) async {
+    emit(TTSLoading());
+    final audioUrl = podcast.audioUrl;
+    if (audioUrl != null && audioUrl.isNotEmpty) {
+      try {
+        log('Trying to download audio from: $audioUrl');
+        final tempDir = await getTemporaryDirectory();
+        final tempFile =
+            File('${tempDir.path}/podcast_audio_${podcast.id}.mp3');
+        final response = await Dio().get(
+          audioUrl,
+          options: Options(responseType: ResponseType.bytes),
+        );
+        await tempFile.writeAsBytes(response.data);
+        emit(AudioFileReady(tempFile.path));
+        return;
+      } on DioException catch (e) {
+        log('Failed to download audio from Supabase: $e');
+        if (e.response?.statusCode == 400) {
+          // Optionally handle error
         }
+        await TextToSpeechService.speak(text: podcast.article);
+        emit(TTSOnly());
+        return;
+      } catch (e) {
+        log('Failed to download audio from Supabase: $e');
+        await TextToSpeechService.speak(text: podcast.article);
+        emit(TTSOnly());
+        return;
       }
-    });
+    }
+    // Fallback: Use Flutter TTS only (not ElevenLabs)
+    await TextToSpeechService.speak(text: podcast.article);
+    emit(TTSOnly());
   }
 
-  // Load available voices
-  Future<void> loadVoices() async {
-    try {
-      emit(TTSLoading());
-      _voices = await _ttsService.getVoices();
-      _selectedVoice = _voices.isNotEmpty ? _voices.first : null;
-      _errorMessage = null;
-      emit(TTSVoicesLoaded());
-    } catch (e) {
-      _errorMessage = 'Failed to load voices: ${e.toString()}';
-      emit(TTSError());
-    }
-  }
-
-  // // Select a voice
-  // void selectVoice(Voice voice) {
-  //   _selectedVoice = voice;
-  //   if (state is TTSVoicesLoaded) {
-  //     emit(TTSVoicesLoaded());
-  //   }
-  // }
-
-  // Speak text
-  Future<void> speak({
-    required String text,
-    Voice? voice,
-    double stability = 0.5,
-    double similarityBoost = 0.5,
-    String modelId = 'eleven_monolingual_v1',
-  }) async {
-    final voiceToUse = voice ?? _selectedVoice;
-
-    if (voiceToUse == null) {
-      _errorMessage = 'No voice selected';
-      emit(TTSError());
-      return;
-    }
-
-    try {
-      _currentText = text;
-      _errorMessage = null;
-      emit(TTSSpeaking());
-
-      await _ttsService.speak(
-        text: text,
-        voiceId: voiceToUse.voiceId,
-        stability: stability,
-        similarityBoost: similarityBoost,
-        modelId: modelId,
-      );
-    } catch (e) {
-      _errorMessage = 'Failed to speak: ${e.toString()}';
-      _currentText = null;
-      emit(TTSError());
-    }
-  }
-
-  // Stream text to speech (for longer texts)
-  Future<void> streamSpeak({
-    required String text,
-    Voice? voice,
-    double stability = 0.5,
-    double similarityBoost = 0.5,
-    String modelId = 'eleven_monolingual_v1',
-    int optimizeStreamingLatency = 0,
-  }) async {
-    final voiceToUse = voice ?? _selectedVoice;
-
-    if (voiceToUse == null) {
-      _errorMessage = 'No voice selected';
-      emit(TTSError());
-      return;
-    }
-
-    try {
-      _currentText = text;
-      _errorMessage = null;
-      emit(TTSSpeaking());
-
-      await _ttsService.streamTextToSpeech(
-        text: text,
-        voiceId: voiceToUse.voiceId,
-        stability: stability,
-        similarityBoost: similarityBoost,
-        modelId: modelId,
-      );
-    } catch (e) {
-      _errorMessage = 'Failed to stream speak: ${e.toString()}';
-      _currentText = null;
-      emit(TTSError());
-    }
-  }
-
-  // Pause playback
-  Future<void> pause() async {
-    try {
-      await _ttsService.pause();
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = 'Failed to pause: ${e.toString()}';
-      emit(TTSError());
-    }
-  }
-
-  // Resume playback
-  Future<void> resume() async {
-    try {
-      await _ttsService.resume();
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = 'Failed to resume: ${e.toString()}';
-      emit(TTSError());
-    }
-  }
-
-  // Stop playback
-  Future<void> stop() async {
-    try {
-      await _ttsService.stop();
-      _currentText = null;
-      _errorMessage = null;
-      emit(TTSStopped());
-    } catch (e) {
-      _errorMessage = 'Failed to stop: ${e.toString()}';
-      emit(TTSError());
-    }
-  }
-
-  // Clear error
-  void clearError() {
-    _errorMessage = null;
-    if (_voices.isNotEmpty) {
-      emit(TTSVoicesLoaded());
-    } else {
-      emit(TTSInitial());
-    }
-  }
-
-  @override
-  Future<void> close() {
-    _ttsService.dispose();
-    return super.close();
-  }
 }

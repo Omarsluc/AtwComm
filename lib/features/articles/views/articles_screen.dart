@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:atw_comm/core/utils/enums.dart';
+import 'package:atw_comm/features/articles/logic/article_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theming/colors.dart';
 import '../../../core/theming/style.dart';
@@ -78,7 +80,11 @@ class ArticlesScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    PlayPodcastScreen(podcast: podcast),
+                                    BlocProvider(
+                                      create: (context) => ArticleCubit(),
+                                      child: PlayPodcastScreen(
+                                          podcast: podcast),
+                                    ),
                               ),
                             );
                           },
@@ -107,6 +113,7 @@ class _PodcastItem extends StatelessWidget {
   final Color color;
   final String title;
   final String subtitle;
+
   const _PodcastItem({
     required this.number,
     required this.color,

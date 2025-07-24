@@ -11,6 +11,8 @@ class ElevenLabsService {
   final Dio _dio;
   final AudioPlayer audioPlayer = AudioPlayer();
 
+  final String voiceId = '';
+
   ElevenLabsService({required String apiKey})
       : _apiKey = apiKey,
         _dio = Dio() {
@@ -33,7 +35,7 @@ class ElevenLabsService {
 
       return voices;
     } on DioException catch (e) {
-      throw Exception('Failed to fetch voices: ${e.message}');
+      rethrow;
     } catch (e) {
       throw Exception('Error fetching voices: $e');
     }
@@ -69,7 +71,7 @@ class ElevenLabsService {
 
       return Uint8List.fromList(response.data);
     } on DioException catch (e) {
-      throw Exception('Failed to generate speech: ${e.message}');
+      rethrow;
     } catch (e) {
       throw Exception('Error generating speech: $e');
     }
@@ -78,7 +80,6 @@ class ElevenLabsService {
   /// Convert text to speech and play directly
   Future<void> speak({
     required String text,
-    required String voiceId,
     double stability = 0.5,
     double similarityBoost = 0.5,
     String modelId = 'eleven_monolingual_v1',
@@ -94,7 +95,8 @@ class ElevenLabsService {
 
       // Save to temporary file
       final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/temp_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
+      final tempFile = File(
+          '${tempDir.path}/temp_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
       await tempFile.writeAsBytes(audioBytes);
 
       // Play the audio
@@ -105,6 +107,8 @@ class ElevenLabsService {
         tempFile.deleteSync();
       });
     } catch (e) {
+      rethrow;
+    } catch (e) {
       throw Exception('Error playing speech: $e');
     }
   }
@@ -112,7 +116,6 @@ class ElevenLabsService {
   /// Stream text to speech (for longer texts)
   Future<void> streamTextToSpeech({
     required String text,
-    required String voiceId,
     double stability = 0.5,
     double similarityBoost = 0.5,
     String modelId = 'eleven_monolingual_v1',
@@ -141,7 +144,8 @@ class ElevenLabsService {
 
       // Save streamed data to temporary file
       final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/stream_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
+      final tempFile = File(
+          '${tempDir.path}/stream_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
 
       final sink = tempFile.openWrite();
       await response.data.stream.forEach((chunk) {
@@ -157,7 +161,7 @@ class ElevenLabsService {
         tempFile.deleteSync();
       });
     } on DioException catch (e) {
-      throw Exception('Failed to stream speech: ${e.message}');
+      rethrow;
     } catch (e) {
       throw Exception('Error streaming speech: $e');
     }

@@ -8,6 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/Api/supabaseApi.dart';
 import '../../../core/helpers/spacing.dart';
 import '../../../core/utils/enums.dart';
+import '../../../core/service/elevenlabs_service.dart';
+import 'dart:typed_data';
+import '../../../core/helpers/constants.dart';
+import 'package:dio/dio.dart';
 
 class AddArticleScreen extends StatefulWidget {
   const AddArticleScreen({Key? key}) : super(key: key);
@@ -51,6 +55,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
         throw Exception('Could not get current user');
       }
 
+      // 1. Create podcast entry in DB (without audio_url)
       final podcast = await createPodcast(
         title: _titleController.text,
         article: _articleController.text,
@@ -58,15 +63,54 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
         authorName: authorName,
       );
 
-      if (podcast != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Podcast created successfully!')),
-        );
-        Navigator.pop(context);
-      } else {
+      if (podcast == null) {
         throw Exception('Failed to create podcast');
       }
+
+      // 2. Generate audio using ElevenLabs
+      final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+      final String voiceId =
+          'kdmDKE6EkgrWrrykO9Qt'; // Use your preferred voiceId
+      Uint8List? audioBytes;
+      try {
+        audioBytes = await ttsService.textToSpeech(
+          text: _articleController.text,
+          voiceId: voiceId,
+        );
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 401) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Audio generation failed: Unauthorized. Please contact support.')),
+          );
+          audioBytes = null;
+        } else {
+          rethrow;
+        }
+      }
+
+      if (audioBytes != null) {
+        // 3. Upload audio to Supabase Storage
+        final String fileName =
+            'podcast_${podcast['id'] ?? DateTime.now().millisecondsSinceEpoch}.mp3';
+        final audioUrl =
+            await uploadAudioToSupabaseStorage(audioBytes, fileName);
+
+        // 4. Update podcast entry with audio_url if upload succeeded
+        if (audioUrl != null && podcast['id'] != null) {
+          await supabase
+              .from('podcasts')
+              .update({'audio_url': audioUrl}).eq('id', podcast['id']);
+        }
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Podcast created successfully!')),
+      );
+      Navigator.pop(context);
     } catch (e) {
+      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );

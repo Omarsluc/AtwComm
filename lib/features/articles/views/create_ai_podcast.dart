@@ -8,6 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theming/colors.dart';
 import '../../../core/theming/style.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/Api/supabaseApi.dart';
+import '../../../core/service/elevenlabs_service.dart';
+import '../../../core/helpers/constants.dart';
+import 'dart:typed_data';
 
 class CreateAIPodcastScreen extends StatefulWidget {
   const CreateAIPodcastScreen({super.key});
@@ -48,6 +52,53 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
             ? conversation.join('\n\n')
             : (conversation ?? '');
         log('text output : $podcastText');
+
+        // --- AI Podcast DB and Storage Integration ---
+        final title = _userAnswer ?? 'AI Podcast';
+        // 1. Create podcast entry in DB (without audio_url)
+        final podcast = await createAiPodcast(
+          title: title,
+          article: podcastText,
+        );
+        if (podcast == null) {
+          throw Exception('Failed to create podcast');
+        }
+        // 2. Generate audio using ElevenLabs
+
+        final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+        final String voiceId =
+            's3TPKV1kjDlVtZbl4Ksh'; // Use your preferred voiceId for AI
+        Uint8List audioBytes = await ttsService.textToSpeech(
+          text: podcastText,
+          voiceId: voiceId,
+        );
+
+        // 3. Upload audio to Supabase Storage
+        final String fileName =
+            'ai_podcast_${podcast['id'] ?? DateTime.now().millisecondsSinceEpoch}.mp3';
+        final audioUrl =
+            await uploadAudioToSupabaseStorage(audioBytes, fileName);
+        log('audioUrl $audioUrl');
+        // 4. Update podcast entry with audio_url if upload succeeded
+        if (audioUrl != null && podcast['id'] != null) {
+          log('Trying to update podcast ${podcast['id']} with URL $audioUrl');
+
+          try {
+            final updateResponse = await supabase
+                .from('ai_podcasts')
+                .update({'audio_url': audioUrl})
+                .eq('id', podcast['id'])
+                .maybeSingle();
+
+            log('Update response: $updateResponse');
+          } catch (e) {
+            log('Update failed: $e');
+          }
+        } else {
+          log('audioUrl or podcast ID is null!');
+        }
+        // --- End Integration ---
+
         setState(() {
           _isLoading = false;
           _isReady = true;

@@ -24,6 +24,22 @@ void main() async {
 
   Bloc.observer = MyBlocObserver();
 
+  final response = await Supabase.instance.client
+      .from('api_keys')
+      .select('key_value')
+      .eq('key_name', 'elevenlabs')
+      .maybeSingle();
+
+  if (response == null) {
+    debugPrint("API key not found in Supabase.");
+  } else {
+    final apiKey = response['key_value'];
+    SharredKeys.elevenLabsKey = apiKey;
+    debugPrint("API key found in Supabase: $apiKey");
+
+    // debugPrint("API key: $apiKey");
+  }
+
   runApp(EasyLocalization(
     supportedLocales: const [Locale('en')],
     path: 'assets/translations',

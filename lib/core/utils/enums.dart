@@ -22,7 +22,7 @@ String podcastTypeToDbString(PodcastTypes type) {
     case PodcastTypes.managing:
       return 'managing';
     case PodcastTypes.front:
-      return 'front';
+      return 'frontend';
     case PodcastTypes.security:
       return 'security';
     case PodcastTypes.others:

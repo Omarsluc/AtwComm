@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:atw_comm/core/utils/consts.dart';
 import 'package:atw_comm/features/articles/model/podcast_model.dart';
@@ -98,12 +99,65 @@ Future<Map<String, dynamic>?> createPodcast({
   }
 }
 
+
+Future<Map<String, dynamic>?> createAiPodcast({
+  required String title,
+  required String article,
+  String? audioUrl,
+}) async {
+  try {
+
+    // Then create the podcast
+    final response = await supabase
+        .from('ai_podcasts')
+        .insert({
+      'title': title,
+      'article': article,
+      'audio_url': audioUrl,
+      'created_at': DateTime.now().toIso8601String(),
+    })
+        .select()
+        .single();
+
+    return response;
+  } catch (e) {
+    log('Error creating podcast: $e');
+    return null;
+  }
+}
+
 Future<String?> getCurrentUserName() async {
   try {
     log(userNameIdentified ?? 'no');
     return userNameIdentified;
   } catch (e) {
     print('Error getting user name: $e');
+    return null;
+  }
+}
+
+Future<String?> uploadAudioToSupabaseStorage(
+    Uint8List audioBytes, String fileName) async {
+  try {
+    final result =
+        await supabase.storage.from('podcast-audio-files').uploadBinary(
+              fileName,
+              audioBytes,
+              fileOptions: const FileOptions(
+                upsert: true,
+                contentType: 'audio/mpeg',
+              ),
+            );
+    if (result is! String) {
+      log('Error uploading audio: $result');
+      return null;
+    }
+    // Get the public URL
+    final publicUrl =
+        supabase.storage.from('podcast-audio-files').getPublicUrl(fileName);
+    return publicUrl;
+  } catch (e) {
+    log('Error uploading audio to Supabase Storage: ${e.toString()}');
     return null;
   }
 }

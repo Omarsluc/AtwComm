@@ -13,6 +13,11 @@ import 'package:atw_comm/core/service/elevenlabs_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
+import 'package:atw_comm/core/service/textToSpeach.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../logic/article_cubit.dart';
+import '../logic/article_state.dart';
 
 class PlayPodcastScreen extends StatefulWidget {
   final Podcast podcast;
@@ -26,27 +31,10 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
   final ElevenLabsService _ttsService =
       ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
   bool _isPlaying = false;
-  bool _isLoadingAudio = false;
   Duration _audioDuration = Duration.zero;
   Duration _audioPosition = Duration.zero;
   PlayerState _playerState = PlayerState.stopped;
   String? _audioFilePath;
-
-//   String kmpPodcastScript = '''
-// 🎙️ Welcome to DevTalk Bytes!
-//
-// Today, we're diving into Kotlin Multiplatform (KMP) — a game-changer for mobile developers. KMP lets you share business logic across Android and iOS, using Kotlin for the core, while keeping native UI with Jetpack Compose and SwiftUI.
-//
-// Imagine writing your networking, database, and state management once, and reusing it on both platforms — that's the KMP magic! It's perfect for teams that want efficiency without sacrificing native performance.
-//
-// With growing tooling and community support, KMP is quickly becoming a top choice for modern cross-platform development.
-//
-// 🔊 Until next byte, keep coding smart!
-// ''';
-  final String _text = '';
-
-  final String _voiceId =
-      'wxweiHvoC2r2jFM7mS8b'; // Egyptian Arabic voiceId from ElevenLabs
 
   @override
   void initState() {
@@ -73,31 +61,14 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
         _isPlaying = false;
       });
     });
-    _prepareAudio();
-  }
-
-  Future<void> _prepareAudio() async {
-    setState(() => _isLoadingAudio = true);
-    log(widget.podcast.article);
-    try {
-      final audioBytes = await _ttsService.textToSpeech(
-          text: widget.podcast.article, voiceId: _voiceId);
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File(
-          '${tempDir.path}/preloaded_audio_${DateTime.now().millisecondsSinceEpoch}.mp3');
-      await tempFile.writeAsBytes(audioBytes);
-      setState(() {
-        _audioFilePath = tempFile.path;
-      });
-    } catch (e) {
-      log(e.toString());
-      // Optionally handle error
-    }
-    setState(() => _isLoadingAudio = false);
+    // Use cubit to prepare audio
+    Future.microtask(
+        () => context.read<ArticleCubit>().prepareAudio(widget.podcast));
   }
 
   @override
   void dispose() {
+    _ttsService.stop(); // Stop any playing audio
     _ttsService.dispose();
     super.dispose();
   }
@@ -141,176 +112,211 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorsManager.mainColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const CustomAppBar(),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 24.h),
-                    // Category Card
-                    Column(
+    return BlocBuilder<ArticleCubit, ArticleState>(
+      builder: (context, state) {
+        bool showSlider = false;
+        bool showStopOnly = false;
+        if (state is AudioFileReady) {
+          _audioFilePath = state.filePath;
+          showSlider = true;
+        } else if (state is TTSOnly) {
+          _audioFilePath = null;
+          showStopOnly = true;
+        }
+        return Scaffold(
+          backgroundColor: ColorsManager.mainColor,
+          body: SafeArea(
+            child: Column(
+              children: [
+                const CustomAppBar(),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
+                      ),
+                    ),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: 250.h,
-                          child: Image.asset(Assets.figuresBoyHeadset,
-                              fit: BoxFit.contain),
+                        SizedBox(height: 24.h),
+                        // Category Card
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 250.h,
+                              child: Image.asset(Assets.figuresBoyHeadset,
+                                  fit: BoxFit.contain),
+                            ),
+                            SizedBox(height: 8.h),
+                            PublicText(
+                              text: 'User Experience',
+                              textTheme: TextStyles.font13DarkBlueMedium
+                                  .copyWith(fontWeight: FontWeight.w500),
+                              color: ColorsManager.darkBlue,
+                              fontWeight: FontWeight.w500,
+                              padding: EdgeInsets.zero,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 24.h),
+                        // Title
                         PublicText(
-                          text: 'User Experience',
-                          textTheme: TextStyles.font13DarkBlueMedium
-                              .copyWith(fontWeight: FontWeight.w500),
-                          color: ColorsManager.darkBlue,
-                          fontWeight: FontWeight.w500,
+                          text: widget.podcast.title,
+                          textTheme: TextStyles.font24BlueBold.copyWith(
+                            color: ColorsManager.mainColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28.sp,
+                          ),
+                          color: ColorsManager.mainColor,
+                          fontWeight: FontWeight.bold,
                           padding: EdgeInsets.zero,
                         ),
+                        SizedBox(height: 4.h),
+                        PublicText(
+                          text: 'by/ ${widget.podcast.authorName}',
+                          textTheme: TextStyles.font12GrayRegular,
+                          color: ColorsManager.gray,
+                          fontWeight: FontWeight.normal,
+                          padding: EdgeInsets.zero,
+                        ),
+                        SizedBox(height: 32.h),
+                        // Audio controls
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32.w),
+                          child: showSlider
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.replay_10,
+                                          color: ColorsManager.mainColor,
+                                          size: 28),
+                                      onPressed: (_audioFilePath == null)
+                                          ? null
+                                          : _seekBackward,
+                                    ),
+                                    Container(
+                                      width: 70.w,
+                                      height: 70.w,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: ColorsManager.mainColor,
+                                            width: 2),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          _isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          color: ColorsManager.mainColor,
+                                          size: 40,
+                                        ),
+                                        onPressed: (_audioFilePath == null)
+                                            ? null
+                                            : () {
+                                                if (_isPlaying) {
+                                                  _ttsService.pause();
+                                                } else if (_audioPosition >
+                                                        Duration.zero &&
+                                                    _audioPosition <
+                                                        _audioDuration) {
+                                                  _resumeTTS();
+                                                } else {
+                                                  _playTTS();
+                                                }
+                                              },
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.forward_10,
+                                          color: ColorsManager.mainColor,
+                                          size: 28),
+                                      onPressed: (_audioFilePath == null)
+                                          ? null
+                                          : _seekForward,
+                                    ),
+                                  ],
+                                )
+                              : showStopOnly
+                                  ? Center(
+                                      child: Container(
+                                        width: 70.w,
+                                        height: 70.w,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: ColorsManager.mainColor,
+                                              width: 2),
+                                        ),
+                                        child: IconButton(
+                                          icon: Icon(Icons.stop,
+                                              color: ColorsManager.mainColor,
+                                              size: 40),
+                                          onPressed: () {
+                                            _ttsService.stop();
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                        ),
+                        if (showSlider)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w),
+                            child: Column(
+                              children: [
+                                Slider(
+                                  value: _audioPosition.inMilliseconds
+                                      .toDouble()
+                                      .clamp(
+                                          0,
+                                          _audioDuration.inMilliseconds
+                                              .toDouble()),
+                                  min: 0.0,
+                                  max: _audioDuration.inMilliseconds
+                                              .toDouble() >
+                                          0
+                                      ? _audioDuration.inMilliseconds.toDouble()
+                                      : 1.0,
+                                  onChanged: (value) async {
+                                    final seekTo =
+                                        Duration(milliseconds: value.toInt());
+                                    await _ttsService.audioPlayer.seek(seekTo);
+                                  },
+                                  activeColor: ColorsManager.mainColor,
+                                  inactiveColor: Colors.black12,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(_formatDuration(_audioPosition),
+                                        style: TextStyle(
+                                            color: ColorsManager.gray)),
+                                    Text(_formatDuration(_audioDuration),
+                                        style: TextStyle(
+                                            color: ColorsManager.gray)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                       ],
                     ),
-                    SizedBox(height: 24.h),
-                    // Title
-                    PublicText(
-                      text: widget.podcast.title,
-                      textTheme: TextStyles.font24BlueBold.copyWith(
-                        color: ColorsManager.mainColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28.sp,
-                      ),
-                      color: ColorsManager.mainColor,
-                      fontWeight: FontWeight.bold,
-                      padding: EdgeInsets.zero,
-                    ),
-                    SizedBox(height: 4.h),
-                    PublicText(
-                      text: 'by/ ${widget.podcast.authorName}',
-                      textTheme: TextStyles.font12GrayRegular,
-                      color: ColorsManager.gray,
-                      fontWeight: FontWeight.normal,
-                      padding: EdgeInsets.zero,
-                    ),
-                    SizedBox(height: 32.h),
-                    // Audio controls
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 32.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.replay_10,
-                                color: ColorsManager.mainColor, size: 28),
-                            onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekBackward,
-                          ),
-                          Container(
-                            width: 70.w,
-                            height: 70.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: ColorsManager.mainColor, width: 2),
-                            ),
-                            child: _isLoadingAudio
-                                ? Center(
-                                    child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: CircularProgressIndicator(
-                                            color: ColorsManager.mainColor,
-                                            strokeWidth: 3)))
-                                : IconButton(
-                                    icon: Icon(
-                                      _isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: ColorsManager.mainColor,
-                                      size: 40,
-                                    ),
-                                    onPressed: (_audioFilePath == null ||
-                                            _isLoadingAudio)
-                                        ? null
-                                        : () {
-                                            if (_isPlaying) {
-                                              _ttsService.pause();
-                                            } else if (_audioPosition >
-                                                    Duration.zero &&
-                                                _audioPosition <
-                                                    _audioDuration) {
-                                              _resumeTTS();
-                                            } else {
-                                              _playTTS();
-                                            }
-                                          },
-                                  ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.forward_10,
-                                color: ColorsManager.mainColor, size: 28),
-                            onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekForward,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 32.h),
-                    // Progress bar
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Column(
-                        children: [
-                          Slider(
-                            value: _audioPosition.inMilliseconds
-                                .toDouble()
-                                .clamp(0,
-                                    _audioDuration.inMilliseconds.toDouble()),
-                            min: 0.0,
-                            max: _audioDuration.inMilliseconds.toDouble() > 0
-                                ? _audioDuration.inMilliseconds.toDouble()
-                                : 1.0,
-                            onChanged: (value) async {
-                              final seekTo =
-                                  Duration(milliseconds: value.toInt());
-                              await _ttsService.audioPlayer.seek(seekTo);
-                            },
-                            activeColor: ColorsManager.mainColor,
-                            inactiveColor: Colors.black12,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(_formatDuration(_audioPosition),
-                                  style: TextStyle(color: ColorsManager.gray)),
-                              Text(_formatDuration(_audioDuration),
-                                  style: TextStyle(color: ColorsManager.gray)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

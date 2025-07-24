@@ -14,6 +14,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:atw_comm/core/service/textToSpeach.dart';
+import 'package:dio/dio.dart';
 
 class PlayBotPodcastScreen extends StatefulWidget {
   final String podcastText;
@@ -32,19 +33,6 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
   Duration _audioPosition = Duration.zero;
   PlayerState _playerState = PlayerState.stopped;
   String? _audioFilePath;
-
-//   String kmpPodcastScript = '''
-// 🎙️ Welcome to DevTalk Bytes!
-//
-// Today, we're diving into Kotlin Multiplatform (KMP) — a game-changer for mobile developers. KMP lets you share business logic across Android and iOS, using Kotlin for the core, while keeping native UI with Jetpack Compose and SwiftUI.
-//
-// Imagine writing your networking, database, and state management once, and reusing it on both platforms — that's the KMP magic! It's perfect for teams that want efficiency without sacrificing native performance.
-//
-// With growing tooling and community support, KMP is quickly becoming a top choice for modern cross-platform development.
-//
-// 🔊 Until next byte, keep coding smart!
-// ''';
-  final String _text = '';
 
   final String _voiceId =
       's3TPKV1kjDlVtZbl4Ksh'; // Egyptian Arabic voiceId from ElevenLabs
@@ -95,12 +83,27 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
         _audioFilePath = tempFile.path;
         _isLoadingAudio = false;
       });
-    } catch (e) {
-      log('ElevenLabs failed, falling back to FlutterTTS: $e');
-      // Fallback: Use FlutterTTS to speak directly
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        log('Received 401 from ElevenLabs, falling back to FlutterTTS');
+        await TextToSpeechService.speak(text: widget.podcastText);
+        setState(() {
+          _audioFilePath = null; // disables the play button/slider
+          _isLoadingAudio = false;
+        });
+        return;
+      }
+      log('ElevenLabs DioException, falling back to FlutterTTS: $e');
       await TextToSpeechService.speak(text: widget.podcastText);
       setState(() {
-        _audioFilePath = null; // disables the play button/slider
+        _audioFilePath = null;
+        _isLoadingAudio = false;
+      });
+    } catch (e) {
+      log('ElevenLabs failed, falling back to FlutterTTS: $e');
+      await TextToSpeechService.speak(text: widget.podcastText);
+      setState(() {
+        _audioFilePath = null;
         _isLoadingAudio = false;
       });
     }

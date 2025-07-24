@@ -38,7 +38,7 @@ class ArticlesCategoriesScreen extends StatelessWidget {
         height: 180.h,
       ),
       _CategoryCardData(
-        title: 'AI / ML',
+        title: 'AI/ML',
         count: 35,
         bgColor: const Color(0xFFFFE6E6),
         image: Assets.figuresRobot,
@@ -156,7 +156,7 @@ class ArticlesCategoriesScreen extends StatelessWidget {
                               case 'Design':
                                 type = PodcastTypes.design;
                                 break;
-                              case 'Ai':
+                              case 'AI/ML':
                                 type = PodcastTypes.ai;
                                 break;
                               case 'Managing':

@@ -1,9 +1,11 @@
 import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
+import 'package:atw_comm/features/articles/logic/article_cubit.dart';
 import 'package:atw_comm/features/articles/model/podcast_model.dart';
 import 'package:atw_comm/features/staff/views/widgets/add_new_article_container_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/Api/supabaseApi.dart';
@@ -204,7 +206,7 @@ class _StaffScreenState extends State<StaffScreen> {
                           return Padding(
                             padding: EdgeInsets.only(bottom: 16.h),
                             child: ArticleListItem(
-                              onTap: (){},
+                              onTap: () {},
                               articleType: ArticleType.uiUx,
                               title: 'Loading...',
                               time: '---',
@@ -239,8 +241,11 @@ class _StaffScreenState extends State<StaffScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PlayPodcastScreen(
-                                  podcast: podcast,
+                                builder: (_) => BlocProvider(
+                                  create: (context) => ArticleCubit(),
+                                  child: PlayPodcastScreen(
+                                    podcast: podcast,
+                                  ),
                                 ),
                               ),
                             );

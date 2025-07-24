@@ -17,3 +17,10 @@ class TTSPaused extends ArticleState {}
 class TTSStopped extends ArticleState {}
 
 class TTSError extends ArticleState {}
+
+class AudioFileReady extends ArticleState {
+  final String filePath;
+  AudioFileReady(this.filePath);
+}
+
+class TTSOnly extends ArticleState {}

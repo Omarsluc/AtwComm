@@ -2,9 +2,11 @@ import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/theming/style.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
 import 'package:atw_comm/core/widgets/article_list_item.dart';
+import 'package:atw_comm/features/articles/logic/article_cubit.dart';
 import 'package:atw_comm/features/articles/model/podcast_model.dart';
 import 'package:atw_comm/features/articles/views/play_podcast_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/Api/supabaseApi.dart';
@@ -121,8 +123,11 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => PlayPodcastScreen(
-                                            podcast: podcast,
+                                          builder: (_) => BlocProvider(
+                                            create: (context) => ArticleCubit(),
+                                            child: PlayPodcastScreen(
+                                              podcast: podcast,
+                                            ),
                                           ),
                                         ),
                                       );

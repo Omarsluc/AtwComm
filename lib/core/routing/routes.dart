@@ -6,6 +6,7 @@ class Routes {
   static const String articlesScreen = '/ArticlesScreen';
   static const String articlesCategoriesScreen = '/ArticlesCategoriesScreen';
   static const String articleDetailsScreen = '/ArticleDetailsScreen';
+  static const String playPodcastScreen = '/PlayPodcastScreen';
   static const String createAIPodcastScreen = '/CreateAIPodcastScreen';
 
 }
