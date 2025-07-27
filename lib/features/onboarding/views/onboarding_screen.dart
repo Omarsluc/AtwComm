@@ -60,6 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -71,170 +72,168 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Main Content Area with 3D Character and Floating Elements
-              Expanded(
-                flex: 6,
-                child: Stack(
-                  children: [
-                    // Floating Elements
-                    AnimatedBuilder(
-                      animation: _floatingAnimation,
-                      builder: (context, child) {
-                        return Stack(
-                          children: [
-                            // Clock
-                            Positioned(
-                              top: 60.h + _floatingAnimation.value,
-                              left: 40.w,
-                              child: SizedBox(
-                                  height: 80.h,
-                                  width: 80.w,
-                                  child: Image(image: AssetImage(Assets.figuresOnboardingStopwatch))),
-                            ),
-
-                            // Calculator/Grid
-                            Positioned(
-                              top: 100.h + _floatingAnimation.value * 0.7,
-                              right: 60.w,
-                              child: SizedBox(
-                                  height: 60.h,
-                                  width: 60.w,
-                                  child: Image(image: AssetImage(Assets.figuresCalendar))),
-                            ),
-
-                            // Yellow Circle
-                            Positioned(
-                              top: 200.h + _floatingAnimation.value * 0.5,
-                              left: 30.w,
-                              child: SizedBox(
-                                  height: 30.h,
-                                  width: 30.w,
-                                  child: Image(image: AssetImage(Assets.figuresOnboardingPieChart))),
-                            ),
-
-                            // Documents/Notes
-                            Positioned(
-                              top: 250.h + _floatingAnimation.value * 0.8,
-                              right: 40.w,
-                              child: SizedBox(
+        child: Column(
+          children: [
+            // Main Content Area with 3D Character and Floating Elements
+            Expanded(
+              flex: 6,
+              child: Stack(
+                children: [
+                  // Floating Elements
+                  AnimatedBuilder(
+                    animation: _floatingAnimation,
+                    builder: (context, child) {
+                      return Stack(
+                        children: [
+                          // Clock
+                          Positioned(
+                            top: 60.h + _floatingAnimation.value,
+                            left: 40.w,
+                            child: SizedBox(
                                 height: 80.h,
-                                  width: 80.w,
-                                  child: Image(image: AssetImage(Assets.figuresOnboardingTiles))),
-                            ),
+                                width: 80.w,
+                                child: Image(image: AssetImage(Assets.figuresOnboardingStopwatch))),
+                          ),
 
-                            // Small decorative elements
-                            Positioned(
-                              top: 320.h + _floatingAnimation.value * 0.3,
-                              left: 80.w,
-                              child: Container(
-                                width: 12.w,
-                                height: 12.h,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.6),
-                                  shape: BoxShape.circle,
-                                ),
+                          // Calculator/Grid
+                          Positioned(
+                            top: 100.h + _floatingAnimation.value * 0.7,
+                            right: 60.w,
+                            child: SizedBox(
+                                height: 60.h,
+                                width: 60.w,
+                                child: Image(image: AssetImage(Assets.figuresCalendar))),
+                          ),
+
+                          // Yellow Circle
+                          Positioned(
+                            top: 200.h + _floatingAnimation.value * 0.5,
+                            left: 30.w,
+                            child: SizedBox(
+                                height: 30.h,
+                                width: 30.w,
+                                child: Image(image: AssetImage(Assets.figuresOnboardingPieChart))),
+                          ),
+
+                          // Documents/Notes
+                          Positioned(
+                            top: 250.h + _floatingAnimation.value * 0.8,
+                            right: 40.w,
+                            child: SizedBox(
+                              height: 80.h,
+                                width: 80.w,
+                                child: Image(image: AssetImage(Assets.figuresOnboardingTiles))),
+                          ),
+
+                          // Small decorative elements
+                          Positioned(
+                            top: 320.h + _floatingAnimation.value * 0.3,
+                            left: 80.w,
+                            child: Container(
+                              width: 12.w,
+                              height: 12.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.6),
+                                shape: BoxShape.circle,
                               ),
                             ),
+                          ),
 
-                            Positioned(
-                              top: 180.h + _floatingAnimation.value * 0.4,
-                              right: 120.w,
-                              child: Container(
-                                width: 8.h,
-                                height: 8.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.5),
-                                  shape: BoxShape.circle,
-                                ),
+                          Positioned(
+                            top: 180.h + _floatingAnimation.value * 0.4,
+                            right: 120.w,
+                            child: Container(
+                              width: 8.h,
+                              height: 8.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+
+                  Center(
+                    child: Container(
+                      width: 200.w,
+                      height: 200.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Image(image: AssetImage(Assets.figuresFemaleOnboradingFigure))
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Bottom Section
+            Expanded(
+              flex: 4,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    children: [
+                      // Logo/Icon
+                      SvgPicture.asset(Assets.iconsAtwLogoPurple,height: 80.h,color: ColorsManager.mainColor,),
+                      SizedBox(height: 24.h),
+
+                      // Title
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            color: Colors.black,
+                          ),
+                          children: [
+                            TextSpan(text: 'Knowledge Starts '),
+                            TextSpan(
+                              text: 'Here',
+                              style: TextStyle(
+                                color: ColorsManager.mainColor,
+                                fontWeight: FontWeight.bold
                               ),
                             ),
                           ],
-                        );
-                      },
-                    ),
-
-                    Center(
-                      child: Container(
-                        width: 200.w,
-                        height: 200.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(100),
                         ),
-                        child: Image(image: AssetImage(Assets.figuresFemaleOnboradingFigure))
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Bottom Section
-              Expanded(
-                flex: 4,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      children: [
-                        // Logo/Icon
-                        SvgPicture.asset(Assets.iconsAtwLogoPurple,height: 80.h,color: ColorsManager.mainColor,),
-                        SizedBox(height: 24.h),
-
-                        // Title
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              color: Colors.black,
-                            ),
-                            children: [
-                              TextSpan(text: 'Knowledge Starts '),
-                              TextSpan(
-                                text: 'Here',
-                                style: TextStyle(
-                                  color: ColorsManager.mainColor,
-                                  fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ],
-                          ),
+                      SizedBox(height: 12.h),
+                      // Subtitle
+                      Text(
+                        'Access insightful articles and start growing now.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey[600],
+                          height: 1.5,
                         ),
-                        SizedBox(height: 12.h),
-                        // Subtitle
-                        Text(
-                          'Access insightful articles and start growing now.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.grey[600],
-                            height: 1.5,
-                          ),
-                        ),
-                        const Spacer(),
-                        // Get Started Button
-                        AppButton(onPressed: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => LandingScreen()),
-                          );
-                        }, myText: 'Get Started',)
-                      ],
-                    ),
+                      ),
+                      const Spacer(),
+                      // Get Started Button
+                      AppButton(onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LandingScreen()),
+                        );
+                      }, myText: 'Get Started',)
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
