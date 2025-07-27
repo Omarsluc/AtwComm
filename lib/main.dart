@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'bloc_observer.dart';
 import 'core/routing/app_router.dart';
-import 'core/service/speachToText.dart';
 import 'core/service/textToSpeach.dart';
 import 'main_app.dart';
 
@@ -20,8 +19,6 @@ void main() async {
     anonKey: SharredKeys.supabaseAnonKey,
   );
   await TextToSpeechService.initTTS();
-  SpeechToTextService.initSpeech();
-
   Bloc.observer = MyBlocObserver();
 
   final response = await Supabase.instance.client
