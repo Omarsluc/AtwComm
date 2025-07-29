@@ -5,8 +5,10 @@ import 'package:atw_comm/core/widgets/app_button.dart';
 import 'package:atw_comm/core/widgets/globe_appbar_widget.dart';
 import 'package:atw_comm/core/widgets/public_text.dart';
 import 'package:atw_comm/features/articles/views/articles_screen.dart';
+import 'package:atw_comm/features/articles/views/web_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../core/routing/routes.dart';
 import '../../../generated/assets.dart';
 
@@ -75,6 +77,15 @@ class ArticlesCategoriesScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SvgPicture.asset(Assets.iconsAtwLogoPurple,color: ColorsManager.mainColor,),
+        ),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AtwWebViewScreen(),));
+        },
+      ),
       extendBodyBehindAppBar: true,
       backgroundColor: ColorsManager.mainColor,
       body: SafeArea(
