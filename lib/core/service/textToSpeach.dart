@@ -42,9 +42,9 @@ abstract class TextToSpeechService {
               IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
               IosTextToSpeechAudioCategoryOptions.mixWithOthers
             ],
-            IosTextToSpeechAudioMode.voicePrompt);
+            IosTextToSpeechAudioMode.spokenAudio);
 
-        await _flutterTts.setSpeechRate(0.6);
+        await _flutterTts.setSpeechRate(0.4);
 
         await _flutterTts.awaitSpeakCompletion(true);
         await _flutterTts.awaitSynthCompletion(true);
