@@ -19,26 +19,26 @@ class ArticlesCategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = [
       _CategoryCardData(
-        title: 'Mobile',
+        title: 'Mobility',
         count: 15,
         bgColor: const Color(0xFFFFE6E6),
         image: Assets.figuresMobile,
         height: 200.h,
       ),
-      _CategoryCardData(
-        title: 'Backend',
-        count: 10,
-        bgColor: const Color(0xFFE6FFF6),
-        image: Assets.figuresBoyUsingLaptop,
-        height: 220.h,
-      ),
-      _CategoryCardData(
-        title: 'Design',
-        count: 25,
-        bgColor: const Color(0xFFE6F0FF),
-        image: Assets.figuresRocketCloud,
-        height: 180.h,
-      ),
+      // _CategoryCardData(
+      //   title: 'Backend',
+      //   count: 10,
+      //   bgColor: const Color(0xFFE6FFF6),
+      //   image: Assets.figuresBoyUsingLaptop,
+      //   height: 220.h,
+      // ),
+      // _CategoryCardData(
+      //   title: 'Design',
+      //   count: 25,
+      //   bgColor: const Color(0xFFE6F0FF),
+      //   image: Assets.figuresRocketCloud,
+      //   height: 180.h,
+      // ),
       _CategoryCardData(
         title: 'AI/ML',
         count: 35,
@@ -46,20 +46,20 @@ class ArticlesCategoriesScreen extends StatelessWidget {
         image: Assets.figuresRobot,
         height: 210.h,
       ),
-      _CategoryCardData(
-        title: 'Managing',
-        count: 15,
-        bgColor: const Color(0xFFFFF9E6),
-        image: Assets.figuresGuyReading,
-        height: 190.h,
-      ),
-      _CategoryCardData(
-        title: 'Frontend',
-        count: 12,
-        bgColor: const Color(0xFFE6E6FF),
-        image: Assets.figuresFrontEngineering,
-        height: 230.h,
-      ),
+      // _CategoryCardData(
+      //   title: 'Managing',
+      //   count: 15,
+      //   bgColor: const Color(0xFFFFF9E6),
+      //   image: Assets.figuresGuyReading,
+      //   height: 190.h,
+      // ),
+      // _CategoryCardData(
+      //   title: 'Frontend',
+      //   count: 12,
+      //   bgColor: const Color(0xFFE6E6FF),
+      //   image: Assets.figuresFrontEngineering,
+      //   height: 230.h,
+      // ),
       _CategoryCardData(
         title: 'Security',
         count: 22,
@@ -158,23 +158,11 @@ class ArticlesCategoriesScreen extends StatelessWidget {
                             final cat = categories[index];
                             PodcastTypes type;
                             switch (cat.title) {
-                              case 'Mobile':
+                              case 'Mobility':
                                 type = PodcastTypes.mobile;
-                                break;
-                              case 'Backend':
-                                type = PodcastTypes.backend;
-                                break;
-                              case 'Design':
-                                type = PodcastTypes.design;
                                 break;
                               case 'AI/ML':
                                 type = PodcastTypes.ai;
-                                break;
-                              case 'Managing':
-                                type = PodcastTypes.managing;
-                                break;
-                              case 'Front':
-                                type = PodcastTypes.front;
                                 break;
                               case 'Security':
                                 type = PodcastTypes.security;
