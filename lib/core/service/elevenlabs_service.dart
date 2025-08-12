@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
@@ -11,7 +12,7 @@ class ElevenLabsService {
   final Dio _dio;
   final AudioPlayer audioPlayer = AudioPlayer();
 
-  final String voiceId = '';
+  final String voiceId = 'CwhRBWXzGAHq8TQ4Fs17';
 
   ElevenLabsService({required String apiKey})
       : _apiKey = apiKey,
@@ -50,6 +51,7 @@ class ElevenLabsService {
     String modelId = 'eleven_multilingual_v2',
   }) async {
     try {
+      log('$_apiKey the key');
       final response = await _dio.post(
         '/text-to-speech/$voiceId',
         data: {

@@ -28,11 +28,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
 
   final Map<String, PodcastTypes> _typeMapping = {
     'Mobile': PodcastTypes.mobile,
-    'Backend': PodcastTypes.backend,
-    'Design': PodcastTypes.design,
     'AI/ML': PodcastTypes.ai,
-    'Managing': PodcastTypes.managing,
-    'Frontend': PodcastTypes.front,
     'Security': PodcastTypes.security,
     'Others': PodcastTypes.others,
   };

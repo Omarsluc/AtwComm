@@ -1,4 +1,4 @@
-import 'dart:developer';
+// ignore_for_file: unused_field
 
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/theming/style.dart';
@@ -11,11 +11,10 @@ import '../../../core/helpers/constants.dart';
 import '../../../generated/assets.dart';
 import 'package:atw_comm/core/service/elevenlabs_service.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:dio/dio.dart';
-import 'package:atw_comm/core/service/textToSpeach.dart';
+// Removed unused imports
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../logic/article_cubit.dart';
 import '../logic/article_state.dart';
 
@@ -108,6 +107,81 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
     final newPosition = _audioPosition + const Duration(seconds: 10);
     await _ttsService.audioPlayer
         .seek(newPosition > _audioDuration ? _audioDuration : newPosition);
+  }
+
+  bool _isImageUrl(String url) {
+    final lower = url.toLowerCase();
+    return lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.bmp') ||
+        lower.endsWith('.svg');
+  }
+
+  String _fileNameFromUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final segments = uri.pathSegments.where((e) => e.isNotEmpty).toList();
+      if (segments.isEmpty) return url;
+      return segments.last;
+    } catch (_) {
+      return url;
+    }
+  }
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (!await canLaunchUrl(uri)) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Widget _buildAttachmentItem(String url) {
+    final isImage = _isImageUrl(url);
+    final border = Border.all(color: Colors.black12);
+    final radius = BorderRadius.circular(12);
+    return InkWell(
+      onTap: () => _openUrl(url),
+      child: Container(
+        width: 110.w,
+        height: 110.w,
+        decoration: BoxDecoration(border: border, borderRadius: radius),
+        child: ClipRRect(
+          borderRadius: radius,
+          child: isImage
+              ? (url.toLowerCase().endsWith('.svg')
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SvgPicture.network(url, fit: BoxFit.contain),
+                    )
+                  : Image.network(url, fit: BoxFit.cover))
+              : Container(
+                  color: Colors.grey.shade50,
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.insert_drive_file,
+                          color: ColorsManager.mainColor),
+                      const SizedBox(height: 8),
+                      Text(
+                        _fileNameFromUrl(url).split('/').isNotEmpty
+                            ? _fileNameFromUrl(url).split('/').last
+                            : 'File',
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            TextStyle(fontSize: 11.sp, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -308,6 +382,36 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                               ],
                             ),
                           ),
+                        if (widget.podcast.attachments.isNotEmpty) ...[
+                          SizedBox(height: 24.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Attachments',
+                                  style: TextStyles.font18DarkBlueSemiBold
+                                      .copyWith(color: ColorsManager.darkBlue),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                          SizedBox(
+                            height: 120.w,
+                            child: ListView.separated(
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: widget.podcast.attachments.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(width: 12.w),
+                              itemBuilder: (context, index) =>
+                                  _buildAttachmentItem(
+                                widget.podcast.attachments[index],
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

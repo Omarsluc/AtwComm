@@ -4,6 +4,7 @@ import 'package:atw_comm/features/articles/views/bot_podcast_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../../core/theming/colors.dart';
 import '../../../core/theming/style.dart';
@@ -66,8 +67,9 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
         // 2. Generate audio using ElevenLabs
 
         final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+        // log('api key : ${SharredKeys.elevenLabsKey}');
         final String voiceId =
-            's3TPKV1kjDlVtZbl4Ksh'; // Use your preferred voiceId for AI
+            'CwhRBWXzGAHq8TQ4Fs17'; // Use your preferred voiceId for AI
         Uint8List audioBytes = await ttsService.textToSpeech(
           text: podcastText,
           voiceId: voiceId,
@@ -188,9 +190,26 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
                     if (_userAnswer != null) SizedBox(height: 16.h),
                     if (_isLoading || _isReady)
                       const _SystemBubble(
+                        isLoading: true,
                         text:
                             "We're finding the best episode for you... Hang tight!",
                       ),
+                    // SizedBox(height: 16.h),
+                    // if (_isLoading || _isReady)
+                    //   Container(
+                    //       width: 24,
+                    //       height: 50,
+                    //       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    //       decoration: BoxDecoration(
+                    //         border: Border.all(color: ColorsManager.mainColor, width: 1.5),
+                    //         borderRadius: BorderRadius.circular(22),
+                    //         color: Colors.white,
+                    //       ),
+                    //       child: SpinKitThreeBounce(
+                    //         size: 20,
+                    //         color: Colors.grey,
+                    //       )
+                    //   )
                   ],
                 ),
               ),
@@ -268,7 +287,8 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
 
 class _SystemBubble extends StatelessWidget {
   final String text;
-  const _SystemBubble({required this.text});
+  final bool isLoading;
+  const _SystemBubble({required this.text, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -281,7 +301,26 @@ class _SystemBubble extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           color: Colors.white,
         ),
-        child: Text(
+        child: isLoading ? Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                color: ColorsManager.mainColor,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            if (isLoading)
+              SizedBox(
+                width: 74.w,
+                height: 24.h,
+                child: SpinKitThreeBounce(
+                  size: 30.sp,
+                  color: Colors.grey,),)
+          ],
+        ) : Text(
           text,
           style: TextStyle(
             color: ColorsManager.mainColor,
