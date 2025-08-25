@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-	<!-- Flutter / iOS base -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -26,12 +24,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<!-- Launch screen (Flutter) -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-
-	<!-- Orientation -->
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -45,63 +41,47 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- Flutter/iOS perf & input -->
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	  <!-- CAMERA -->
+      <key>NSCameraUsageDescription</key>
+      <string>This app needs access to the camera to capture photos or videos.</string>
 
-	<!-- Required by your plugins (camera, speech_to_text, audioplayers with record, photo library, etc.) -->
-	<key>NSCameraUsageDescription</key>
-	<string>We use the camera to let you capture photos and videos for posts.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library so you can select and upload media.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>We save captured photos and videos to your library when you choose to.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Speech recognition converts your voice to text in the app.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We use the microphone for voice input and audio recording.</string>
+      <!-- MICROPHONE -->
+      <key>NSMicrophoneUsageDescription</key>
+      <string>This app needs microphone access for voice features.</string>
 
-	<!-- Encryption export compliance -->
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
+      <!-- SPEECH RECOGNITION (for flutter_tts if required or future expansion) -->
+      <key>NSSpeechRecognitionUsageDescription</key>
+      <string>This app uses speech recognition for improved voice features.</string>
 
-	<!-- If you need to open other apps with url_launcher, add their schemes here.
-	     Example (uncomment and edit if you actually use them):
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>whatsapp</string>
-		<string>instagram</string>
-		<string>fb</string>
-		<string>twitter</string>
-		<string>mailto</string>
-		<string>tel</string>
-		<string>sms</string>
-	</array>
-	-->
+      <!-- PHOTO LIBRARY (recommended if using camera and accessing storage) -->
+      <key>NSPhotoLibraryUsageDescription</key>
+      <string>This app needs access to your photo library to save or select photos.</string>
 
-	<!-- If you must load http (non-https) URLs in webview_flutter, add ATS exceptions.
-	     Otherwise, omit this block to keep ATS strict.
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>example.com</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSTemporaryExceptionMinimumTLSVersion</key>
-				<string>TLSv1.2</string>
-			</dict>
-		</dict>
-	</dict>
-	-->
+      <!-- LOCATION (optional for supabase or other APIs with location-based services) -->
+      <key>NSLocationWhenInUseUsageDescription</key>
+      <string>This app may use your location to provide better local services.</string>
 
+      <!-- STORAGE (used by flutter_secure_storage) -->
+      <key>NSFileProtectionComplete</key>
+      <string></string>
+
+      <!-- INTERNET / NETWORKING -->
+      <key>NSAppTransportSecurity</key>
+      <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+      </dict>
+
+      <!-- WEBVIEW (used by webview_flutter) -->
+      <key>io.flutter.embedded_views_preview</key>
+      <true/>
+
+      <!-- PERMISSION HANDLER support -->
+      <key>NSUserTrackingUsageDescription</key>
+      <string>This identifier will be used to deliver personalized ads to you.</string>
 </dict>
 </plist>
