@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 abstract class TextToSpeechService {

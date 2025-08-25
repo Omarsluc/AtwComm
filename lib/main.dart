@@ -1,6 +1,5 @@
 import 'package:atw_comm/core/helpers/constants.dart';
 import 'package:bloc/bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +11,6 @@ import 'main_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
   await Supabase.initialize(
     url: SharredKeys.supabaseUrl,
@@ -21,28 +19,28 @@ void main() async {
   await TextToSpeechService.initTTS();
   Bloc.observer = MyBlocObserver();
 
-  final response = await Supabase.instance.client
-      .from('api_keys')
-      .select('key_value')
-      .eq('key_name', 'elevenlabs')
-      .maybeSingle();
+  try {
+    final response = await Supabase.instance.client
+        .from('api_keys')
+        .select('key_value')
+        .eq('key_name', 'elevenlabs')
+        .maybeSingle();
 
-  if (response == null) {
-    debugPrint("API key not found in Supabase.");
-  } else {
-    final apiKey = response['key_value'];
-    SharredKeys.elevenLabsKey = apiKey;
-    debugPrint("API key found in Supabase: $apiKey");
+    if (response == null) {
+      debugPrint("API key not found in Supabase.");
+    } else {
+      final apiKey = response['key_value'];
+      SharredKeys.elevenLabsKey = apiKey;
+      debugPrint("API key found in Supabase: $apiKey");
 
-    // debugPrint("API key: $apiKey");
+      // debugPrint("API key: $apiKey");
+    }
+  } catch (e) {
+    print(e.toString());
   }
 
-  runApp(EasyLocalization(
-    supportedLocales: const [Locale('en')],
-    path: 'assets/translations',
-    fallbackLocale: const Locale('en'),
-    child: MainApp(
+  runApp(MainApp(
       appRouter: AppRouter(),
     ),
-  ));
+  );
 }

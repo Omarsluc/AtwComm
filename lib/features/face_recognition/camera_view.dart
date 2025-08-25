@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:atw_comm/core/routing/routes.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/utils/consts.dart';
@@ -215,7 +217,7 @@ class _CameraScreenState extends State<CameraScreen>
                         aspectRatio: _controller!.value.aspectRatio,
                         child: ClipRRect(
                           child: Transform.rotate(
-                            angle: 90 * 3.14159 / 180,
+                            angle: Platform.isIOS ? 0 : 90 * 3.14159 / 180,
                             child: Transform(
                               alignment: Alignment.center,
                               transform: Matrix4.rotationY(3.14159),
