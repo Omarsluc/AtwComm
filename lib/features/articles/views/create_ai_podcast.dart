@@ -27,13 +27,62 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
   bool _isReady = false;
   String? _userAnswer;
   final Dio _dio = Dio();
+  String? _validationError;
+
+  // Validation method
+  String? _validateInput(String input) {
+    // Check if input is empty or only whitespace
+    if (input.trim().isEmpty) {
+      return 'Please enter a topic for your podcast';
+    }
+
+    // Check if input contains Arabic characters
+    final arabicRegex = RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]');
+    if (arabicRegex.hasMatch(input)) {
+      return 'Please enter your topic in English only';
+    }
+
+    // Check minimum length (optional - you can adjust or remove this)
+    if (input.trim().length < 3) {
+      return 'Topic must be at least 3 characters long';
+    }
+
+    // Check maximum length (optional - you can adjust or remove this)
+    if (input.trim().length > 200) {
+      return 'Topic must be less than 200 characters';
+    }
+
+    return null; // No validation errors
+  }
 
   void _submitAnswer() async {
-    if (_controller.text.trim().isEmpty) return;
+    final input = _controller.text.trim();
+
+    // Validate input
+    final validationError = _validateInput(input);
+    if (validationError != null) {
+      setState(() {
+        _validationError = validationError;
+      });
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(validationError),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    // Clear any previous validation errors
     setState(() {
-      _userAnswer = _controller.text.trim();
+      _validationError = null;
+      _userAnswer = input;
       _isLoading = true;
     });
+
     _generatePodcast();
   }
 
@@ -141,7 +190,7 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
                     SizedBox(height: 16.h),
                     const _SystemBubble(
                       text:
-                          "What topic are you interested in? Tell us what you'd like to hear about.",
+                      "What topic are you interested in? Tell us what you'd like to hear about (in English only).",
                     ),
                     SizedBox(height: 16.h),
                     if (_userAnswer != null)
@@ -154,24 +203,8 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
                       const _SystemBubble(
                         isLoading: true,
                         text:
-                            "We're finding the best episode for you... Hang tight!",
+                        "We're finding the best episode for you... Hang tight!",
                       ),
-                    // SizedBox(height: 16.h),
-                    // if (_isLoading || _isReady)
-                    //   Container(
-                    //       width: 24,
-                    //       height: 50,
-                    //       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                    //       decoration: BoxDecoration(
-                    //         border: Border.all(color: ColorsManager.mainColor, width: 1.5),
-                    //         borderRadius: BorderRadius.circular(22),
-                    //         color: Colors.white,
-                    //       ),
-                    //       child: SpinKitThreeBounce(
-                    //         size: 20,
-                    //         color: Colors.grey,
-                    //       )
-                    //   )
                   ],
                 ),
               ),
@@ -182,28 +215,76 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
               color: Colors.white,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: 'Type your answer...',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              hintText: 'Type your topic',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: _validationError != null
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: _validationError != null
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: _validationError != null
+                                      ? Colors.red
+                                      : ColorsManager.mainColor,
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16.w, vertical: 10.h),
+                            ),
+                            onSubmitted: (_) => _submitAnswer(),
+                            onChanged: (value) {
+                              // Clear validation error when user starts typing
+                              if (_validationError != null) {
+                                setState(() {
+                                  _validationError = null;
+                                });
+                              }
+                            },
                           ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.w, vertical: 10.h),
                         ),
-                        onSubmitted: (_) => _submitAnswer(),
+                        SizedBox(width: 8.w),
+                        IconButton(
+                          icon: const Icon(Icons.send,
+                              color: ColorsManager.mainColor),
+                          onPressed: _submitAnswer,
+                        ),
+                      ],
+                    ),
+                    // Show validation error below the text field
+                    if (_validationError != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _validationError!,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 8.w),
-                    IconButton(
-                      icon: const Icon(Icons.send,
-                          color: ColorsManager.mainColor),
-                      onPressed: _submitAnswer,
-                    ),
                   ],
                 ),
               ),
