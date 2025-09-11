@@ -136,7 +136,8 @@ class _CameraScreenState extends State<CameraScreen>
 
       if (response.statusCode == 200) {
         String faceRecognized =
-            response.data['recognized']['name']?.toString().toLowerCase() ?? "unknown";
+            response.data['recognized']['name']?.toString().toLowerCase() ??
+                "unknown";
 
         if (faceRecognized != 'unknown') {
           userNameIdentified = faceRecognized;
@@ -210,22 +211,33 @@ class _CameraScreenState extends State<CameraScreen>
                 fit: StackFit.expand,
                 children: [
                   // Camera Preview
-                  Positioned.fill(
-                    child: Platform.isIOS
-                        ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(0),
-                      child: CameraPreview(_controller!),
-                    )
-                        : Transform.rotate(
-                      angle: 90 * 3.14159 / 180,
+                  if(Platform.isIOS)
+                    Positioned.fill(
                       child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationY(3.14159),
-                        child: CameraPreview(_controller!),
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(0),
+                              child: CameraPreview(_controller!),
+                            )
+                    ),
+                  if (Platform.isAndroid)
+                    Positioned.fill(
+                      child: Transform.rotate(
+                        angle: 90 * 3.14159 / 180,
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.rotationY(3.14159),
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: _controller!.value.previewSize!.height,
+                              height: _controller!.value.previewSize!.height,
+                              child: CameraPreview(_controller!),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+
                   // Overlay
                   _buildOverlay(),
 
