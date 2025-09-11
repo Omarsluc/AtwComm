@@ -52,7 +52,6 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
         final podcastText = conversation is List
             ? conversation.join('\n\n')
             : (conversation ?? '');
-        log('text output : $podcastText');
 
         // --- AI Podcast DB and Storage Integration ---
         final title = _userAnswer ?? 'AI Podcast';
@@ -64,43 +63,6 @@ class _CreateAIPodcastScreenState extends State<CreateAIPodcastScreen> {
         if (podcast == null) {
           throw Exception('Failed to create podcast');
         }
-        // 2. Generate audio using ElevenLabs
-
-        final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
-        // log('api key : ${SharredKeys.elevenLabsKey}');
-        final String voiceId =
-            'CwhRBWXzGAHq8TQ4Fs17'; // Use your preferred voiceId for AI
-        Uint8List audioBytes = await ttsService.textToSpeech(
-          text: podcastText,
-          voiceId: voiceId,
-        );
-
-        // 3. Upload audio to Supabase Storage
-        final String fileName =
-            'ai_podcast_${podcast['id'] ?? DateTime.now().millisecondsSinceEpoch}.mp3';
-        final audioUrl =
-            await uploadAudioToSupabaseStorage(audioBytes, fileName);
-        log('audioUrl $audioUrl');
-        // 4. Update podcast entry with audio_url if upload succeeded
-        if (audioUrl != null && podcast['id'] != null) {
-          log('Trying to update podcast ${podcast['id']} with URL $audioUrl');
-
-          try {
-            final updateResponse = await supabase
-                .from('ai_podcasts')
-                .update({'audio_url': audioUrl})
-                .eq('id', podcast['id'])
-                .maybeSingle();
-
-            log('Update response: $updateResponse');
-          } catch (e) {
-            log('Update failed: $e');
-          }
-        } else {
-          log('audioUrl or podcast ID is null!');
-        }
-        // --- End Integration ---
-
         setState(() {
           _isLoading = false;
           _isReady = true;

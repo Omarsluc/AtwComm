@@ -64,42 +64,42 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
       }
 
       // 2. Generate audio using ElevenLabs
-      final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
-      final String voiceId =
-          'kdmDKE6EkgrWrrykO9Qt'; // Use your preferred voiceId
-      Uint8List? audioBytes;
-      try {
-        audioBytes = await ttsService.textToSpeech(
-          text: _articleController.text,
-          voiceId: voiceId,
-        );
-      } on DioException catch (e) {
-        if (e.response?.statusCode == 401) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Audio generation failed: Unauthorized. Please contact support.')),
-          );
-          audioBytes = null;
-        } else {
-          rethrow;
-        }
-      }
+      // final ttsService = ElevenLabsService(apiKey: SharredKeys.elevenLabsKey);
+      // final String voiceId =
+      //     'kdmDKE6EkgrWrrykO9Qt'; // Use your preferred voiceId
+      // Uint8List? audioBytes;
+      // try {
+      //   audioBytes = await ttsService.textToSpeech(
+      //     text: _articleController.text,
+      //     voiceId: voiceId,
+      //   );
+      // } on DioException catch (e) {
+      //   if (e.response?.statusCode == 401) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //           content: Text(
+      //               'Audio generation failed: Unauthorized. Please contact support.')),
+      //     );
+      //     audioBytes = null;
+      //   } else {
+      //     rethrow;
+      //   }
+      // }
 
-      if (audioBytes != null) {
-        // 3. Upload audio to Supabase Storage
-        final String fileName =
-            'podcast_${podcast['id'] ?? DateTime.now().millisecondsSinceEpoch}.mp3';
-        final audioUrl =
-            await uploadAudioToSupabaseStorage(audioBytes, fileName);
-
-        // 4. Update podcast entry with audio_url if upload succeeded
-        if (audioUrl != null && podcast['id'] != null) {
-          await supabase
-              .from('podcasts')
-              .update({'audio_url': audioUrl}).eq('id', podcast['id']);
-        }
-      }
+      // if (audioBytes != null) {
+      //   // 3. Upload audio to Supabase Storage
+      //   final String fileName =
+      //       'podcast_${podcast['id'] ?? DateTime.now().millisecondsSinceEpoch}.mp3';
+      //   final audioUrl =
+      //       await uploadAudioToSupabaseStorage(audioBytes, fileName);
+      //
+      //   // 4. Update podcast entry with audio_url if upload succeeded
+      //   if (audioUrl != null && podcast['id'] != null) {
+      //     await supabase
+      //         .from('podcasts')
+      //         .update({'audio_url': audioUrl}).eq('id', podcast['id']);
+      //   }
+      // }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Podcast created successfully!')),

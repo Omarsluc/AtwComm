@@ -19,25 +19,21 @@ void main() async {
   await TextToSpeechService.initTTS();
   Bloc.observer = MyBlocObserver();
 
-  try {
-    final response = await Supabase.instance.client
-        .from('api_keys')
-        .select('key_value')
-        .eq('key_name', 'elevenlabs')
-        .maybeSingle();
-
-    if (response == null) {
-      debugPrint("API key not found in Supabase.");
-    } else {
-      final apiKey = response['key_value'];
-      SharredKeys.elevenLabsKey = apiKey;
-      debugPrint("API key found in Supabase: $apiKey");
-
-      // debugPrint("API key: $apiKey");
-    }
-  } catch (e) {
-    print(e.toString());
-  }
+  // final response = await Supabase.instance.client
+  //     .from('api_keys')
+  //     .select('key_value')
+  //     .eq('key_name', 'elevenlabs')
+  //     .maybeSingle();
+  //
+  // if (response == null) {
+  //   debugPrint("API key not found in Supabase.");
+  // } else {
+  //   final apiKey = response['key_value'];
+  //   SharredKeys.elevenLabsKey = apiKey;
+  //   debugPrint("API key found in Supabase: $apiKey");
+  //
+  //   // debugPrint("API key: $apiKey");
+  // }
 
   runApp(MainApp(
       appRouter: AppRouter(),

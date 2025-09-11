@@ -33,12 +33,8 @@ class _StaffScreenState extends State<StaffScreen> {
   final Map<String, PodcastTypes?> _typeMapping = {
     'All': null,
     'Mobile': PodcastTypes.mobile,
-    'Backend': PodcastTypes.backend,
-    'Design': PodcastTypes.design,
-    'AI/ML': PodcastTypes.ai,
-    'Managing': PodcastTypes.managing,
-    'Frontend': PodcastTypes.front,
     'Security': PodcastTypes.security,
+    'Others' : PodcastTypes.others
   };
 
   Future<void> _fetchPodcasts(PodcastTypes? type) async {
@@ -95,7 +91,7 @@ class _StaffScreenState extends State<StaffScreen> {
                     child: Icon(Icons.person,
                         color: ColorsManager.mainColor, size: 32.sp),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -113,25 +109,9 @@ class _StaffScreenState extends State<StaffScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   // New Article Card
                   AddNewArticleCardWidget(),
-                  const SizedBox(height: 24),
-                  // Search Bar
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey[200],
-                  //     borderRadius: BorderRadius.circular(12),
-                  //   ),
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  //   child: const TextField(
-                  //     decoration: InputDecoration(
-                  //       icon: Icon(Icons.search, color: Colors.grey),
-                  //       hintText: 'Search..',
-                  //       border: InputBorder.none,
-                  //     ),
-                  //   ),
-                  // ),
                   SizedBox(height: 24.h),
                   // Section Title
                   Row(

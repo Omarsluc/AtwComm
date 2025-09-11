@@ -74,10 +74,13 @@ abstract class TextToSpeechService {
 
   static Future<void> speak({required String text}) async {
     await _flutterTts.speak(text);
+    _isSpeaking = true;
   }
 
   static Future<void> stop() async {
     await _flutterTts.stop();
+    _isSpeaking = false;
+
   }
 
   static bool isSpeaking() {

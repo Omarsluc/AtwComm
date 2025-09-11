@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field
 
+import 'package:atw_comm/core/service/textToSpeach.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/theming/style.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
@@ -262,64 +263,8 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                         // Audio controls
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32.w),
-                          child: showSlider
-                              ? Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.replay_10,
-                                          color: ColorsManager.mainColor,
-                                          size: 28),
-                                      onPressed: (_audioFilePath == null)
-                                          ? null
-                                          : _seekBackward,
-                                    ),
-                                    Container(
-                                      width: 70.w,
-                                      height: 70.w,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                            color: ColorsManager.mainColor,
-                                            width: 2),
-                                      ),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          _isPlaying
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                          color: ColorsManager.mainColor,
-                                          size: 40,
-                                        ),
-                                        onPressed: (_audioFilePath == null)
-                                            ? null
-                                            : () {
-                                                if (_isPlaying) {
-                                                  _ttsService.pause();
-                                                } else if (_audioPosition >
-                                                        Duration.zero &&
-                                                    _audioPosition <
-                                                        _audioDuration) {
-                                                  _resumeTTS();
-                                                } else {
-                                                  _playTTS();
-                                                }
-                                              },
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.forward_10,
-                                          color: ColorsManager.mainColor,
-                                          size: 28),
-                                      onPressed: (_audioFilePath == null)
-                                          ? null
-                                          : _seekForward,
-                                    ),
-                                  ],
-                                )
-                              : showStopOnly
-                                  ? Center(
+                          child:
+                          Center(
                                       child: Container(
                                         width: 70.w,
                                         height: 70.w,
@@ -334,54 +279,12 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                                               color: ColorsManager.mainColor,
                                               size: 40),
                                           onPressed: () {
-                                            _ttsService.stop();
+                                            TextToSpeechService.stop();
                                           },
                                         ),
                                       ),
                                     )
-                                  : const SizedBox.shrink(),
                         ),
-                        if (showSlider)
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Column(
-                              children: [
-                                Slider(
-                                  value: _audioPosition.inMilliseconds
-                                      .toDouble()
-                                      .clamp(
-                                          0,
-                                          _audioDuration.inMilliseconds
-                                              .toDouble()),
-                                  min: 0.0,
-                                  max: _audioDuration.inMilliseconds
-                                              .toDouble() >
-                                          0
-                                      ? _audioDuration.inMilliseconds.toDouble()
-                                      : 1.0,
-                                  onChanged: (value) async {
-                                    final seekTo =
-                                        Duration(milliseconds: value.toInt());
-                                    await _ttsService.audioPlayer.seek(seekTo);
-                                  },
-                                  activeColor: ColorsManager.mainColor,
-                                  inactiveColor: Colors.black12,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(_formatDuration(_audioPosition),
-                                        style: TextStyle(
-                                            color: ColorsManager.gray)),
-                                    Text(_formatDuration(_audioDuration),
-                                        style: TextStyle(
-                                            color: ColorsManager.gray)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
                         if (widget.podcast.attachments.isNotEmpty) ...[
                           SizedBox(height: 24.h),
                           Padding(

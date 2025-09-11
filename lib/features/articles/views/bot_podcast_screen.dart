@@ -215,106 +215,34 @@ class _PlayBotPodcastScreenState extends State<PlayBotPodcastScreen> {
                       padding: EdgeInsets.zero,
                     ),
                     SizedBox(height: 32.h),
-                    // Audio controls
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 32.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.replay_10,
-                                color: ColorsManager.mainColor, size: 28),
-                            onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekBackward,
-                          ),
-                          Container(
+                        padding: EdgeInsets.symmetric(horizontal: 32.w),
+                        child:
+                        Center(
+                          child: Container(
                             width: 70.w,
                             height: 70.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                  color: ColorsManager.mainColor, width: 2),
+                                  color: ColorsManager.mainColor,
+                                  width: 2),
                             ),
-                            child: _isLoadingAudio
-                                ? Center(
-                                    child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: CircularProgressIndicator(
-                                            color: ColorsManager.mainColor,
-                                            strokeWidth: 3)))
-                                : IconButton(
-                                    icon: Icon(
-                                      _isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: ColorsManager.mainColor,
-                                      size: 40,
-                                    ),
-                                    onPressed: (_audioFilePath == null ||
-                                            _isLoadingAudio)
-                                        ? null
-                                        : () {
-                                            if (_isPlaying) {
-                                              _ttsService.pause();
-                                            } else if (_audioPosition >
-                                                    Duration.zero &&
-                                                _audioPosition <
-                                                    _audioDuration) {
-                                              _resumeTTS();
-                                            } else {
-                                              _playTTS();
-                                            }
-                                          },
-                                  ),
+                            child: IconButton(
+                              icon: Icon(TextToSpeechService.isSpeaking() ? Icons.play_arrow : Icons.stop,
+                                  color: ColorsManager.mainColor,
+                                  size: 40.sp),
+                              onPressed: () {
+                                if(TextToSpeechService.isSpeaking()) {
+                                  TextToSpeechService.stop();
+                                } else {
+                                  TextToSpeechService.speak(
+                                      text: widget.podcastText);
+                                }
+                              },
+                            ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.forward_10,
-                                color: ColorsManager.mainColor, size: 28),
-                            onPressed:
-                                (_audioFilePath == null || _isLoadingAudio)
-                                    ? null
-                                    : _seekForward,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 32.h),
-                    // Progress bar
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Column(
-                        children: [
-                          Slider(
-                            value: _audioPosition.inMilliseconds
-                                .toDouble()
-                                .clamp(0,
-                                    _audioDuration.inMilliseconds.toDouble()),
-                            min: 0.0,
-                            max: _audioDuration.inMilliseconds.toDouble() > 0
-                                ? _audioDuration.inMilliseconds.toDouble()
-                                : 1.0,
-                            onChanged: (value) async {
-                              final seekTo =
-                                  Duration(milliseconds: value.toInt());
-                              await _ttsService.audioPlayer.seek(seekTo);
-                            },
-                            activeColor: ColorsManager.mainColor,
-                            inactiveColor: Colors.black12,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(_formatDuration(_audioPosition),
-                                  style: TextStyle(color: ColorsManager.gray)),
-                              Text(_formatDuration(_audioDuration),
-                                  style: TextStyle(color: ColorsManager.gray)),
-                            ],
-                          ),
-                        ],
-                      ),
+                        )
                     ),
                   ],
                 ),
