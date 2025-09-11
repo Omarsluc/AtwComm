@@ -210,25 +210,22 @@ class _CameraScreenState extends State<CameraScreen>
                 fit: StackFit.expand,
                 children: [
                   // Camera Preview
-                  Transform.scale(
-                    scale: 1.8,
-                    child: Center(
-                      child: AspectRatio(
-                        aspectRatio: _controller!.value.aspectRatio,
-                        child: ClipRRect(
-                          child: Transform.rotate(
-                            angle: Platform.isIOS ? 0 : 90 * 3.14159 / 180,
-                            child: Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.rotationY(3.14159),
-                              child: CameraPreview(_controller!),
-                            ),
-                          ),
-                        ),
+                  Positioned.fill(
+                    child: Platform.isIOS
+                        ? Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(0),
+                      child: CameraPreview(_controller!),
+                    )
+                        : Transform.rotate(
+                      angle: 90 * 3.14159 / 180,
+                      child: Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.rotationY(3.14159),
+                        child: CameraPreview(_controller!),
                       ),
                     ),
                   ),
-
                   // Overlay
                   _buildOverlay(),
 
