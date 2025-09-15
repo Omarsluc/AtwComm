@@ -1,4 +1,5 @@
 import 'package:atw_comm/core/helpers/extention.dart';
+import 'package:atw_comm/core/service/textToSpeach.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
 import 'package:atw_comm/features/articles/logic/article_cubit.dart';
@@ -59,11 +60,18 @@ class _StaffScreenState extends State<StaffScreen> {
     }
   }
 
+  void _sayWelcomingSentence () {
+    TextToSpeechService.speak(text: 'Hello, ${userNameIdentified ?? ''}');
+  }
+
   @override
   void initState() {
     super.initState();
     // Fetch initial podcasts
     _fetchPodcasts(null);
+    _sayWelcomingSentence();
+
+
   }
 
   @override
