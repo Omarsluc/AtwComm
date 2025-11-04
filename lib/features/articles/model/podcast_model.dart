@@ -7,7 +7,7 @@ class Podcast {
   final String? audioUrl;
   final DateTime createdAt;
   // Optional list of attachment URLs (images or files)
-  final List<String> attachments;
+  final List<String>? attachments;
 
   Podcast({
     required this.id,
@@ -17,7 +17,7 @@ class Podcast {
     required this.authorName,
     this.audioUrl,
     required this.createdAt,
-    this.attachments = const [],
+    this.attachments,
   });
 
   factory Podcast.fromJson(Map<String, dynamic> json) {

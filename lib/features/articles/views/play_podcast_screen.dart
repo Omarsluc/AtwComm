@@ -285,7 +285,7 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                                       ),
                                     )
                         ),
-                        if (widget.podcast.attachments.isNotEmpty) ...[
+                        if (widget.podcast.attachments != null) ...[
                           SizedBox(height: 24.h),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -300,17 +300,20 @@ class _PlayPodcastScreenState extends State<PlayPodcastScreen> {
                             ),
                           ),
                           SizedBox(height: 12.h),
-                          SizedBox(
-                            height: 120.w,
-                            child: ListView.separated(
-                              padding: EdgeInsets.symmetric(horizontal: 24.w),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: widget.podcast.attachments.length,
-                              separatorBuilder: (_, __) =>
-                                  SizedBox(width: 12.w),
-                              itemBuilder: (context, index) =>
-                                  _buildAttachmentItem(
-                                widget.podcast.attachments[index],
+                          Visibility(
+                            visible: widget.podcast.attachments != null,
+                            child: SizedBox(
+                              height: 120.w,
+                              child: ListView.separated(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: widget.podcast.attachments!.length,
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(width: 12.w),
+                                itemBuilder: (context, index) =>
+                                    _buildAttachmentItem(
+                                  widget.podcast.attachments![index],
+                                ),
                               ),
                             ),
                           ),

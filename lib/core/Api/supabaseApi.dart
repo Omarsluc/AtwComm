@@ -34,14 +34,15 @@ Future<bool> ensureUserExists(String userName) async {
 }
 
 Future<List<Podcast>> fetchPodcastsByType(String type) async {
-  final response = await supabase
-      .from('podcasts')
-      .select()
-      .eq('type', type)
-      .order('created_at', ascending: false);
-  if (response is List) {
+  try{
+    final response = await supabase
+        .from('podcasts')
+        .select()
+        .eq('type', type)
+        .order('created_at', ascending: false);
     return response.map((e) => Podcast.fromJson(e)).toList();
-  } else {
+  } catch (e) {
+    log('Error fetching podcasts by type: $e');
     return [];
   }
 }
@@ -53,12 +54,8 @@ Future<List<Podcast>> fetchAllPodcasts() async {
         .select()
         .order('created_at', ascending: false);
 
-    if (response is List) {
-      return response.map((e) => Podcast.fromJson(e)).toList();
-    } else {
-      return [];
-    }
-  } catch (e) {
+    return response.map((e) => Podcast.fromJson(e)).toList();
+    } catch (e) {
     log('Error fetching all podcasts: $e');
     return [];
   }

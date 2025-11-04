@@ -63,6 +63,7 @@ class ArticlesScreen extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
+                      log(snapshot.data.toString());
                       return Center(child: Text('Error: \\${snapshot.error}'));
                     }
                     final podcasts = snapshot.data ?? [];
