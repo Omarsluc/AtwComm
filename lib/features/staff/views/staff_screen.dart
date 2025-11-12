@@ -1,4 +1,3 @@
-import 'package:atw_comm/core/helpers/extention.dart';
 import 'package:atw_comm/core/service/textToSpeach.dart';
 import 'package:atw_comm/core/theming/colors.dart';
 import 'package:atw_comm/core/widgets/custom_appbar.dart';
@@ -9,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/Api/supabaseApi.dart';
 import '../../../core/routing/routes.dart';
 import '../../../core/utils/consts.dart';
 import '../../../core/utils/enums.dart';
 import '../../../core/widgets/article_list_item.dart';
-import '../../../generated/assets.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../articles/views/play_podcast_screen.dart';
@@ -64,6 +63,36 @@ class _StaffScreenState extends State<StaffScreen> {
     TextToSpeechService.speak(text: 'Hello, ${userNameIdentified ?? ''}');
   }
 
+  Future<void> _signOut() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+      userNameIdentified = null;
+      if (!mounted) return;
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(Routes.loginScreen, (route) => false);
+    } on AuthException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(error.message),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Unable to sign out right now. Please try again.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -93,27 +122,41 @@ class _StaffScreenState extends State<StaffScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Header
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.grey[300],
-                    child: Icon(Icons.person,
-                        color: ColorsManager.mainColor, size: 32.sp),
-                  ),
-                  SizedBox(width: 12.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Hello, ${userNameIdentified ?? ''}',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 28.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: Colors.grey[300],
+                        child: Icon(Icons.person,
+                            color: ColorsManager.mainColor, size: 32.sp),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'What are you up to today?',
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Hello, ${userNameIdentified ?? ''}',
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'What are you up to today?',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: _signOut,
+                        icon: const Icon(Icons.logout),
+                        color: ColorsManager.mainColor,
+                        tooltip: 'Sign out',
                       ),
                     ],
                   ),
@@ -239,7 +282,7 @@ class _StaffScreenState extends State<StaffScreen> {
                             );
                           },
                           articleType: ArticleType.uiUx,
-                          title: podcast.title ?? '',
+                          title: podcast.title,
                           time:
                               '${DateTime.parse(podcast.createdAt.toString()).difference(DateTime.now()).inHours.abs()}h ago',
                         );

@@ -1,6 +1,4 @@
-import 'package:atw_comm/features/articles/views/play_podcast_screen.dart';
-import 'package:atw_comm/features/articles/views/articles_categories_screen.dart';
-import 'package:atw_comm/features/onboarding/views/onboarding_screen.dart';
+import 'package:atw_comm/features/auth/views/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +18,7 @@ class MainApp extends StatelessWidget {
       minTextAdapt: true,
       builder: (_, child) {
         return MaterialApp(
-          home: OnboardingScreen(),
+          home: const AuthGate(),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.red,

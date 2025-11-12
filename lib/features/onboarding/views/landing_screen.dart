@@ -76,6 +76,14 @@ class LandingScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                       SizedBox(height: 40.h),
+                      AppButton(
+                        onPressed: () =>
+                            context.pushNamed(Routes.loginScreen),
+                        myText: 'Sign in with Email',
+                        isSecondary: true,
+                        width: double.infinity,
+                      ),
+                      SizedBox(height: 16.h),
                       AnimatedFaceIdButton(
                         icon: SvgPicture.asset(Assets.iconsFaceID),
                         onTap: () => context.pushNamed(Routes.cameraScreen),
